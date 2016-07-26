@@ -10,21 +10,18 @@ using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
 using System.Windows.Shapes;
-using TheStage.ViewModel;
 
 namespace TheStage
 {
     /// <summary>
-    /// Логика взаимодействия для MainWindow.xaml
+    /// Логика взаимодействия для wndGameController.xaml
     /// </summary>
-    public partial class wndMenu : Window
+    public partial class wndGameController : Window
     {
-        public wndMenu()
+        public wndGameController()
         {
             InitializeComponent();
-            this.DataContext = new wndMenuViewModel();
         }
     }
 }
