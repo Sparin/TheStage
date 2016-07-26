@@ -1,0 +1,6 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:local="clr-namespace:TheStage">
+    <PathGeometry x:Key="Square"
+        Figures="M0,0 L 50,0 L 50,50 L0,50 Z" FillRule="NonZero"/>
+</ResourceDictionary>

@@ -5,22 +5,27 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Media;
+using System.Windows.Media.Animation;
 
 namespace TheStage.ViewModel
 {
-    class wndMenuViewModel : INotifyPropertyChanged
+    class PrimitiveViewModel: INotifyPropertyChanged
     {
-        private string title = "The Stage";
-        public string Title
+        private PathGeometry animationPath;
+        public PathGeometry AnimationPath
         {
-            get { return title; }
-            set { title = value;  RaisePropertyChanged(); }
+            get { return animationPath; }
+            set { animationPath = value; RaisePropertyChanged(); }
         }
 
-        public wndMenuViewModel()
+        private Storyboard animation;
+        public Storyboard Animation
         {
-            new wndGameController() { DataContext = new wndGameControllerViewModel()}.ShowDialog();
+            get { return animation; }
+            set { animation = value; RaisePropertyChanged(); }
         }
+
 
         private void RaisePropertyChanged([CallerMemberName]string propertyName = "")
         {

@@ -6,7 +6,19 @@
         xmlns:local="clr-namespace:TheStage"
         mc:Ignorable="d"
         Title="wndGameController" Height="300" Width="300">
-    <Grid>
-        
-    </Grid>
+    <Window.InputBindings>
+        <KeyBinding Command="{Binding GestureClickedCommand}"
+                    CommandParameter="Left"
+                    Key="A"/>
+        <!--Gesture="{DynamicResource input_RightBottom}"/>TODO-->
+    </Window.InputBindings>
+    <Viewbox>
+        <ItemsControl Width="{Binding Width}" Height="{Binding Height}" ItemsSource="{Binding GameObjects}">
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate >
+                    <Canvas Background="Black"/>
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+        </ItemsControl>
+    </Viewbox>
 </Window>
