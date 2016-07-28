@@ -33,7 +33,7 @@ namespace TheStage.ViewModel
         {
             get { return score; }
             set { score = value; RaisePropertyChanged(); }
-        }        
+        }
 
         private double width;
         public double Width
@@ -113,15 +113,15 @@ namespace TheStage.ViewModel
 
             DoubleAnimationUsingPath dx = new DoubleAnimationUsingPath();
             dx.PathGeometry = way;
-            dx.BeginTime = TimeSpan.FromSeconds(5);
-            dx.Duration = TimeSpan.FromSeconds(10);
+            dx.BeginTime = TimeSpan.FromSeconds(2);
+            dx.Duration = TimeSpan.FromSeconds(4);
             dx.Source = PathAnimationSource.X;
             Storyboard.SetTargetProperty(dx, new PropertyPath(Canvas.LeftProperty));
 
             DoubleAnimationUsingPath dy = new DoubleAnimationUsingPath();
             dy.PathGeometry = way;
-            dy.BeginTime = TimeSpan.FromSeconds(5);
-            dy.Duration = TimeSpan.FromSeconds(10);
+            dy.BeginTime = TimeSpan.FromSeconds(2);
+            dy.Duration = TimeSpan.FromSeconds(4);
             dy.Source = PathAnimationSource.Y;
             Storyboard.SetTargetProperty(dy, new PropertyPath(Canvas.TopProperty));
 
@@ -135,24 +135,32 @@ namespace TheStage.ViewModel
                 GameObjects.Remove(basicSquare);
                 GameObjects.Add(basicStatus);
             };
+            
 
             basicStatus = new TextBlock();
             basicStatus.Text = "Bad";
-            basicStatus.FontSize = 18;
-            basicStatus.Opacity = 1;
+            basicStatus.FontSize = 24;
+            basicStatus.FontFamily = new FontFamily("Impact");
             basicStatus.Foreground = new SolidColorBrush(Color.FromRgb(255, 0, 0));
 
-            Canvas.SetLeft(basicStatus, 1000);
-            Canvas.SetTop(basicStatus, 450);
+            Canvas.SetLeft(basicStatus, 1025);
+            Canvas.SetTop(basicStatus, 500);
 
             Storyboard statusStory = new Storyboard();
             DoubleAnimation basicAnimationStatusOpacity = new DoubleAnimation(1, 0, TimeSpan.FromSeconds(1));
-            DoubleAnimation basicAnimationStatusTop = new DoubleAnimation(450, 400, TimeSpan.FromSeconds(1));
+            DoubleAnimation basicAnimationStatusTop = new DoubleAnimation(500, 400, TimeSpan.FromSeconds(1));
             Storyboard.SetTargetProperty(basicAnimationStatusTop, new PropertyPath(Canvas.TopProperty));
-            Storyboard.SetTargetProperty(basicAnimationStatusOpacity, new PropertyPath("Opacity"));
+            Storyboard.SetTargetProperty(basicAnimationStatusOpacity, new PropertyPath(Control.OpacityProperty));
 
+            statusStory.Children.Add(basicAnimationStatusTop);
+            statusStory.Children.Add(basicAnimationStatusOpacity);
             statusStory.Completed += (s, e) => GameObjects.Remove(basicStatus);
-            basicStatus.Loaded += (s, e) => basicStatus.BeginStoryboard(statusStory);
+            basicStatus.Loaded += (s, e) =>
+            {
+                basicStatus.BeginStoryboard(statusStory);
+                //basicStatus.BeginAnimation(Control.OpacityProperty, basicAnimationStatusOpacity);
+                //basicStatus.BeginAnimation(Canvas.TopProperty, basicAnimationStatusTop);
+            };
 
 
             basicSquare.Loaded += (s, e) => basicSquare.BeginStoryboard(basicAnimation);
@@ -193,14 +201,14 @@ namespace TheStage.ViewModel
         {
             string gest = gesture as string;
             if (gest == null)
-
+                throw new ArgumentNullException("gesture");
 
                 if (GameObjects.Count > 2)
                     switch (gest)
                     {
                         case "Left":
                             Path nextObject = (Path)GameObjects[1];
-                            double epsilon = 30;
+                            double epsilon = 100;
                             if (nextObject.Data == (PathGeometry)nextObject.FindResource("Square"))
                             {
                                 double distance = Math.Sqrt(
