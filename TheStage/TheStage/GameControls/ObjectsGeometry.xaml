@@ -3,4 +3,9 @@
                     xmlns:local="clr-namespace:TheStage">
     <PathGeometry x:Key="Square"
         Figures="M0,0 L 50,0 L 50,50 L0,50 Z" FillRule="NonZero"/>
+    <GeometryGroup x:Key="Circle">
+        <EllipseGeometry Center="25,25" RadiusX="25" RadiusY="25"/>
+    </GeometryGroup>
+    <PathGeometry x:Key="Cross" Figures="M0,50 L 50,0 M50,50 L0,0"/>
+    <PathGeometry x:Key="Triangle" Figures="M0,45 L 25,0 L50,45 L0,45 L25,0"/>
 </ResourceDictionary>

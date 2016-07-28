@@ -76,6 +76,7 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="GameControls\ObjectType.cs" />
     <Compile Include="ViewModel\PrimitiveViewModel.cs" />
     <Compile Include="ViewModel\wndGameControllerViewModel.cs" />
     <Compile Include="ViewModel\wndMenuViewModel.cs" />

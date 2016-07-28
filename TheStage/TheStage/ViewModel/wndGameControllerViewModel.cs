@@ -92,12 +92,12 @@ namespace TheStage.ViewModel
 
             Path basicSquare = new Path();
             basicSquare.Stroke = new SolidColorBrush(Color.FromRgb(255, 0, 0));
-            basicSquare.Data = (PathGeometry)basicSquare.FindResource("Square");
+            basicSquare.Data = (Geometry)basicSquare.FindResource("Square");
 
             Path basicPlaceholder = new Path();
             basicPlaceholder.Stroke = new SolidColorBrush(Color.FromRgb(0, 255, 0));
             basicPlaceholder.Fill = basicPlaceholder.Stroke;
-            basicPlaceholder.Data = (PathGeometry)basicSquare.FindResource("Square");
+            basicPlaceholder.Data = (Geometry)basicSquare.FindResource("Square");
 
             Canvas.SetLeft(basicSquare, -100);
             Canvas.SetTop(basicSquare, -100);
