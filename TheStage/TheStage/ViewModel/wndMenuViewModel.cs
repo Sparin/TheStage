@@ -19,7 +19,7 @@ namespace TheStage.ViewModel
 
         public wndMenuViewModel()
         {
-            new wndGameController() { DataContext = new wndGameControllerViewModel()}.ShowDialog();
+            new wndGameController() { DataContext = new wndGameControllerViewModel(@"G:\TypicalLevel") }.ShowDialog();
         }
 
         private void RaisePropertyChanged([CallerMemberName]string propertyName = "")
