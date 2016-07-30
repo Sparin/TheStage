@@ -5,11 +5,20 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:TheStage"
         mc:Ignorable="d"
-        Title="wndGameController" Height="300" Width="300">
+        Title="{Binding Score}" Height="300" Width="300">
     <Window.InputBindings>
-        <KeyBinding Command="{Binding GestureClickedCommand}"
+        <KeyBinding Command="{Binding KeyClickedCommand}"
+                    CommandParameter="Bottom"
+                    Key="{Binding LeftInputMap.Bottom}"/>
+        <KeyBinding Command="{Binding KeyClickedCommand}"
                     CommandParameter="Left"
-                    Key="A"/>
+                    Key="{Binding LeftInputMap.Left}"/>
+        <KeyBinding Command="{Binding KeyClickedCommand}"
+                    CommandParameter="Right"
+                    Key="{Binding LeftInputMap.Right}"/>
+        <KeyBinding Command="{Binding KeyClickedCommand}"
+                    CommandParameter="Top"
+                    Key="{Binding LeftInputMap.Top}"/>
         <!--Gesture="{DynamicResource input_RightBottom}"/>TODO-->
     </Window.InputBindings>
     <Viewbox>

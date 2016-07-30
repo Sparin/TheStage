@@ -4,13 +4,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace TheStage.GameControls
+namespace TheStage.Input
 {
-    public enum ObjectType
+    public enum KeyType
     {
-        Square,
-        Circle,
-        Cross,
-        Triangle
+        Top,
+        Left,
+        Right,
+        Bottom
     }
 }

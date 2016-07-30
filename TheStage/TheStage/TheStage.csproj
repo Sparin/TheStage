@@ -60,7 +60,15 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Page Include="GameControls\ObjectsGeometry.xaml">
+    <Page Include="Elements\Primitive\PrimitiveGeometry.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Elements\Primitive\PrimitiveStyles.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Elements\StatusStyles.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -76,8 +84,13 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="GameControls\ObjectType.cs" />
-    <Compile Include="ViewModel\PrimitiveViewModel.cs" />
+    <Compile Include="Elements\Element.cs" />
+    <Compile Include="Elements\Placeholder.cs" />
+    <Compile Include="Elements\Primitive\Primitive.cs" />
+    <Compile Include="Elements\Status.cs" />
+    <Compile Include="Elements\Primitive\PrimitiveType.cs" />
+    <Compile Include="Input\InputMap.cs" />
+    <Compile Include="Input\KeyType.cs" />
     <Compile Include="ViewModel\wndGameControllerViewModel.cs" />
     <Compile Include="ViewModel\wndMenuViewModel.cs" />
     <Compile Include="wndGameController.xaml.cs">

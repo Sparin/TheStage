@@ -18,6 +18,8 @@ using System.IO;
 
 using ShapePath = System.Windows.Shapes.Path;
 using System.Text.RegularExpressions;
+using TheStage.Input;
+using TheStage.Elements;
 
 namespace TheStage.ViewModel
 {
@@ -25,12 +27,16 @@ namespace TheStage.ViewModel
     {
         //WIP
         //TODO: Make a new class with placeholder, primitive, animations and status references 
-        private List<ShapePath> placeholders = new List<ShapePath>();
-        private List<ShapePath> primitives = new List<ShapePath>();
-        private List<Storyboard> animations = new List<Storyboard>();
+        private List<Element> Elements = new List<Element>();
 
 
         private MediaElement mediaPlayer = new MediaElement();
+
+        private InputMap leftInputMap;
+        public InputMap LeftInputMap { get { return leftInputMap; } set { leftInputMap = value; RaisePropertyChanged(); } }
+
+        private InputMap rightInputMap;
+        public InputMap RightInputMap { get { return rightInputMap; } set { rightInputMap = value; RaisePropertyChanged(); } }
 
         public ObservableCollection<UIElement> GameObjects { get; private set; }
 
@@ -72,16 +78,17 @@ namespace TheStage.ViewModel
         //}
         #endregion
 
-        public Command GestureClickedCommand { get; private set; }
-
-
-        //Legacy
-        //TODO: Rework click handler
-        TextBlock basicStatus;
+        public Command KeyClickedCommand { get; private set; }
 
         public wndGameControllerViewModel(string levelDirectory)
         {
             GameObjects = new ObservableCollection<UIElement>();
+
+            LeftInputMap = new InputMap();
+            LeftInputMap.Bottom = Key.S;
+            LeftInputMap.Left = Key.A;
+            LeftInputMap.Top = Key.W;
+            leftInputMap.Right = Key.D;
 
             if (!Directory.Exists(levelDirectory))
                 throw new DirectoryNotFoundException(levelDirectory);
@@ -101,198 +108,98 @@ namespace TheStage.ViewModel
             mediaPlayer.Width = width;
             mediaPlayer.Height = height;
 
-            GameObjects.Add(mediaPlayer);            
+            GameObjects.Add(mediaPlayer);
 
-            //Legacy
-            //TODO: Rework
-            GestureClickedCommand = new Command(GestureClicked);
+            KeyClickedCommand = new Command(KeyClicked);
 
             ReadMap(levelDirectory + "/map.csv");
 
             //TODO: Synchronization logic            
             mediaPlayer.Play();
+
+            var placeholders = Elements.Select((x) => x.Placeholder).ToList();
+            for (int i = 0; i < placeholders.Count; i++)
+                placeholders[i].Figure.BeginAnimation(Control.OpacityProperty, placeholders[i].Animation);
+
+            var primitives = Elements.Select((x) => x.Primitive).ToList();
             for (int i = 0; i < primitives.Count; i++)
-                primitives[i].BeginStoryboard(animations[i]);
+                primitives[i].Animation.Begin(primitives[i].Figure, true);
         }
 
         //TODO: Create styles for the game objects
-        //TODO: Make a new class with placeholder, primitive, animations and status references 
-        //      with default values for each object
         private void ReadMap(string path)
         {
             string[] objects = File.ReadAllLines(path);
             for (int i = 0; i < objects.Length; i++)
             {
                 string[] arguments = objects[i].Split(';');
-                ShapePath gameObject = new ShapePath();
-                gameObject.Data = (Geometry)gameObject.FindResource(arguments[0]);
-                gameObject.Stroke = new SolidColorBrush(Color.FromRgb(0, 255, 0));
-
-                ShapePath gamePlaceholder = new ShapePath();
-                gamePlaceholder.Data = gameObject.Data;
-                gamePlaceholder.Stroke = new SolidColorBrush(Color.FromRgb(255, 0, 0));
-                gamePlaceholder.Fill = gamePlaceholder.Stroke;
-                gamePlaceholder.StrokeThickness = 5;
 
                 //Get and set start point and end point from the path
                 MatchCollection points = Regex.Matches(arguments[1], @"(-?\d* *, *-?\d*)");
                 Point startPoint = Point.Parse(points[0].Value);
                 Point endPoint = Point.Parse(points[points.Count - 1].Value);
-
-                Canvas.SetLeft(gameObject, startPoint.X);
-                Canvas.SetTop(gameObject, startPoint.Y);
-
-                Canvas.SetLeft(gamePlaceholder, endPoint.X);
-                Canvas.SetTop(gamePlaceholder, endPoint.Y);
-
-                #region Status of the game object 
-                Storyboard gameStatusStory = GetStoryboardForStatus(endPoint);
-                TextBlock gameStatus = new TextBlock();
-                gameStatus.Text = "BAD";
-                gameStatus.FontSize = 24;
-                gameStatus.FontFamily = new FontFamily("Impact");
-                gameStatus.Foreground = new SolidColorBrush(Color.FromRgb(255, 0, 0));
-                gameStatus.Loaded += (s, e) => gameStatus.BeginStoryboard(gameStatusStory);
-                gameStatusStory.Completed += (s, e) => GameObjects.Remove(gameStatus);
-
-                Canvas.SetLeft(gameStatus, endPoint.X-25);
-                Canvas.SetTop(gameStatus, endPoint.Y);
-                #endregion
-
                 int beginTime = int.Parse(arguments[2]);
                 int duration = int.Parse(arguments[3]);
-                Storyboard gameStoryboard = GetStoryboardByPath(arguments[1], TimeSpan.FromMilliseconds(beginTime), TimeSpan.FromMilliseconds(duration));
-                gameStoryboard.Completed += (s, e) =>
+
+                PrimitiveType type = (PrimitiveType)Enum.Parse(typeof(PrimitiveType), arguments[0]);
+                Placeholder placeholder = new Placeholder(type, TimeSpan.FromMilliseconds(beginTime));
+                Status status = new Status(endPoint);
+                Primitive primitive = new Primitive(type, arguments[1], TimeSpan.FromMilliseconds(beginTime), TimeSpan.FromMilliseconds(duration));
+
+                Element element = new Element(KeyType.Bottom, placeholder, status, primitive);
+
+                Canvas.SetLeft(primitive.Figure, startPoint.X);
+                Canvas.SetTop(primitive.Figure, startPoint.Y);
+                Canvas.SetLeft(placeholder.Figure, endPoint.X);
+                Canvas.SetTop(placeholder.Figure, endPoint.Y);
+
+                status.Animation.Completed += (s, e) => GameObjects.Remove(status.TextElement);
+
+                primitive.Animation.Completed += (s, e) =>
                 {
-                    GameObjects.Remove(gamePlaceholder);
-                    GameObjects.Remove(gameObject);
-                    primitives.Remove(gameObject);
-                    placeholders.Remove(gamePlaceholder);
-                    GameObjects.Add(gameStatus);                    
+                    GameObjects.Add(status.TextElement);
+                    GameObjects.Remove(placeholder.Figure);
+                    GameObjects.Remove(primitive.Figure);
+                    Elements.Remove(element);
                 };
 
-                animations.Add(gameStoryboard);
-                primitives.Add(gameObject);
-                placeholders.Add(gamePlaceholder);
-
-                GameObjects.Add(gamePlaceholder);
-                GameObjects.Add(gameObject);
+                GameObjects.Add(placeholder.Figure);
+                GameObjects.Add(primitive.Figure);
+                Elements.Add(element);
             }
         }
 
-        private Storyboard GetStoryboardForStatus(Point endPoint)
-        {
-            Storyboard animation = new Storyboard();
-            DoubleAnimation dOpacity = new DoubleAnimation(1, 0, TimeSpan.FromSeconds(1));
-            DoubleAnimation dTop = new DoubleAnimation(endPoint.Y, endPoint.Y-100, TimeSpan.FromSeconds(1));
-            Storyboard.SetTargetProperty(dTop, new PropertyPath(Canvas.TopProperty));
-            Storyboard.SetTargetProperty(dOpacity, new PropertyPath(Control.OpacityProperty));
-
-            animation.Children.Add(dTop);
-            animation.Children.Add(dOpacity);
-
-            return animation;
-        }
-        private Storyboard GetStoryboardByPath(string way, TimeSpan beginTime, TimeSpan duration)
-        {
-            Storyboard animation = new Storyboard();
-
-            PathGeometry path = new PathGeometry();
-            path.AddGeometry(Geometry.Parse(way));
-
-            DoubleAnimationUsingPath dx = new DoubleAnimationUsingPath();
-            dx.PathGeometry = path;
-            dx.BeginTime = beginTime;
-            dx.Duration = duration;
-            dx.Source = PathAnimationSource.X;
-            Storyboard.SetTargetProperty(dx, new PropertyPath(Canvas.LeftProperty));
-
-            DoubleAnimationUsingPath dy = new DoubleAnimationUsingPath();
-            dy.PathGeometry = path;
-            dy.BeginTime = beginTime;
-            dy.Duration = duration;
-            dy.Source = PathAnimationSource.Y;
-            Storyboard.SetTargetProperty(dy, new PropertyPath(Canvas.TopProperty));
-
-            animation.Children.Add(dx);
-            animation.Children.Add(dy);
-
-            return animation;
-        }
-
+        //TODO: epsilon(!) beginTime includes duration
+        //      calculating epsilon between two points is too long (kek, welcome to sync)
         public void KeyClicked(object keyType)
         {
             string key = keyType as string;
             if (key == null)
                 throw new ArgumentNullException("keyType");
 
-            switch (key)
+            KeyType type = (KeyType)Enum.Parse(typeof(KeyType), key);
+            if (Elements.Count == 0 || Elements[0].Key != type)
+                return;
+
+            Elements[0].Primitive.Animation.GetCurrentProgress(Elements[0].Primitive.Figure);
+            double? distance = Elements[0].Primitive.Animation.GetCurrentProgress(Elements[0].Primitive.Figure);
+            //Math.Sqrt(
+            //Math.Pow(Canvas.GetLeft(Elements[0].Primitive.Figure) - Canvas.GetLeft(Elements[0].Placeholder.Figure), 2) +
+            //                   Math.Pow(Canvas.GetTop(Elements[0].Primitive.Figure) - Canvas.GetTop(Elements[0].Placeholder.Figure), 2));
+            double epsilon = 0.9;//100;
+            Console.WriteLine(distance);
+
+            if (distance > epsilon)
             {
-                case "Left":
-
-                    break;
-                case "Top":
-
-                    break;
-
-                case "Right":
-
-                    break;
-
-                case "Bottom":
-
-                    break;
+                Elements[0].Status.TextElement.Style = (Style)Elements[0].Status.TextElement.FindResource("StatusGoodStyle");
+                Score += 100;
             }
+            else
+                Elements[0].Status.TextElement.Style = (Style)Elements[0].Status.TextElement.FindResource("StatusBadStyle");
+
+            if (Elements[0].Primitive.Animation.GetCurrentState(Elements[0].Primitive.Figure) == ClockState.Active)
+                Elements[0].Primitive.Animation.SkipToFill(Elements[0].Primitive.Figure);
         }
-
-        #region Legacy of sample
-        public void GestureClicked(object gesture)
-        {
-            string gest = gesture as string;
-            if (gest == null)
-                throw new ArgumentNullException("gesture");
-
-            if (GameObjects.Count > 2)
-                switch (gest)
-                {
-                    case "Left":
-                        ShapePath nextObject = (ShapePath)GameObjects[1];
-                        double epsilon = 100;
-                        if (nextObject.Data == (PathGeometry)nextObject.FindResource("Square"))
-                        {
-                            double distance = Math.Sqrt(
-                                Math.Pow(Canvas.GetLeft(GameObjects[1]) - Canvas.GetLeft(GameObjects[2]), 2) +
-                                Math.Pow(Canvas.GetTop(GameObjects[1]) - Canvas.GetTop(GameObjects[2]), 2));
-                            if (distance < epsilon)
-                            {
-                                basicStatus.Foreground = new SolidColorBrush(Color.FromRgb(0, 255, 0));
-                                basicStatus.Text = "Good";
-                            }
-                            else
-                            {
-
-                            }
-                            //else
-                            //    MessageBox.Show("Bad");
-                        }
-
-                        break;
-                    case "Top":
-
-                        break;
-
-                    case "Right":
-
-                        break;
-
-                    case "Bottom":
-
-                        break;
-                }
-
-            //MessageBox.Show(gest);
-        }
-        #endregion
 
         #region MVVM Related
         private void RaisePropertyChanged([CallerMemberName]string propertyName = "")
