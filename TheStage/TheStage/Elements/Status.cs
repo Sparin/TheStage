@@ -9,7 +9,7 @@ using System.Windows.Media.Animation;
 
 namespace TheStage.Elements
 {
-    public class Status
+    class Status
     {
         public Point PointOfAppearing { get; set; }
         public Storyboard Animation { get; private set; }
@@ -19,7 +19,6 @@ namespace TheStage.Elements
         {
             PointOfAppearing = pointOfAppearing;
             TextElement = new TextBlock();
-            TextElement.Style = (Style)TextElement.FindResource("StatusMainStyle");
             TextElement.Style = (Style)TextElement.FindResource("StatusMissStyle");
 
             Canvas.SetLeft(TextElement, pointOfAppearing.X);

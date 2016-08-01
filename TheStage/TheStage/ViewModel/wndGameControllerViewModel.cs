@@ -29,7 +29,6 @@ namespace TheStage.ViewModel
         //TODO: Make a new class with placeholder, primitive, animations and status references 
         private List<Element> Elements = new List<Element>();
 
-
         private MediaElement mediaPlayer = new MediaElement();
 
         private InputMap leftInputMap;
@@ -79,7 +78,7 @@ namespace TheStage.ViewModel
         #endregion
 
         public Command KeyClickedCommand { get; private set; }
-
+        
         public wndGameControllerViewModel(string levelDirectory)
         {
             GameObjects = new ObservableCollection<UIElement>();
@@ -99,8 +98,8 @@ namespace TheStage.ViewModel
                 throw new FileNotFoundException("map.csv not found");
 
             //TODO: Get Dimensions of media file
-            Width = 1280;
-            Height = 720;
+            Width = 1920;
+            Height = 1080;
 
             mediaPlayer.Source = new Uri(videoPath, UriKind.Absolute);
             mediaPlayer.LoadedBehavior = MediaState.Manual;
