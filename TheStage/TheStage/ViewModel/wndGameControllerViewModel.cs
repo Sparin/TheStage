@@ -61,24 +61,10 @@ namespace TheStage.ViewModel
             set { height = value; RaisePropertyChanged(); }
         }
         #endregion
-
-        #region TODO: Input map bindings 
-        //private string testGesture = "W";
-        //public string TestGesture
-        //{
-        //    get { return testGesture; }
-        //    set { testGesture = value; RaisePropertyChanged(); }
-        //}
-        //private InputMap rigthPanel;
-        //public InputMap RightPanel
-        //{
-        //    get { return rigthPanel; }
-        //    set { rigthPanel = value; RaisePropertyChanged(); }
-        //}
-        #endregion
-
-        public Command KeyClickedCommand { get; private set; }
         
+        public Command RightPadPressedCommand { get; private set; }
+        public Command LeftPadPressedCommand { get; private set; }
+
         public wndGameControllerViewModel(string levelDirectory)
         {
             GameObjects = new ObservableCollection<UIElement>();
@@ -87,7 +73,13 @@ namespace TheStage.ViewModel
             LeftInputMap.Bottom = Key.S;
             LeftInputMap.Left = Key.A;
             LeftInputMap.Top = Key.W;
-            leftInputMap.Right = Key.D;
+            LeftInputMap.Right = Key.D;
+
+            RightInputMap = new InputMap();
+            RightInputMap.Bottom = Key.K;
+            RightInputMap.Left = Key.J;
+            RightInputMap.Top = Key.I;
+            RightInputMap.Right = Key.L;
 
             if (!Directory.Exists(levelDirectory))
                 throw new DirectoryNotFoundException(levelDirectory);
@@ -109,7 +101,9 @@ namespace TheStage.ViewModel
 
             GameObjects.Add(mediaPlayer);
 
-            KeyClickedCommand = new Command(KeyClicked);
+            //Simple way to avoid multibinding
+            RightPadPressedCommand = new Command((obj) => ButtonPressed(obj, true));
+            LeftPadPressedCommand = new Command((obj) => ButtonPressed(obj, false));
 
             ReadMap(levelDirectory + "/map.csv");
 
@@ -125,7 +119,6 @@ namespace TheStage.ViewModel
                 primitives[i].Animation.Begin(primitives[i].Figure, true);
         }
 
-        //TODO: Create styles for the game objects
         private void ReadMap(string path)
         {
             string[] objects = File.ReadAllLines(path);
@@ -145,7 +138,7 @@ namespace TheStage.ViewModel
                 Status status = new Status(endPoint);
                 Primitive primitive = new Primitive(type, arguments[1], TimeSpan.FromMilliseconds(beginTime), TimeSpan.FromMilliseconds(duration));
 
-                Element element = new Element(KeyType.Bottom, placeholder, status, primitive);
+                Element element = new Element((KeyType)type, placeholder, status, primitive);
 
                 Canvas.SetLeft(primitive.Figure, startPoint.X);
                 Canvas.SetTop(primitive.Figure, startPoint.Y);
@@ -168,27 +161,23 @@ namespace TheStage.ViewModel
             }
         }
 
-        //TODO: epsilon(!) beginTime includes duration
-        //      calculating epsilon between two points is too long (kek, welcome to sync)
-        public void KeyClicked(object keyType)
+        public void ButtonPressed(object buttonDirection, bool isRightPad)
         {
-            string key = keyType as string;
-            if (key == null)
-                throw new ArgumentNullException("keyType");
-
-            KeyType type = (KeyType)Enum.Parse(typeof(KeyType), key);
-            if (Elements.Count == 0 || Elements[0].Key != type)
+            if (Elements.Count == 0)
                 return;
 
-            Elements[0].Primitive.Animation.GetCurrentProgress(Elements[0].Primitive.Figure);
-            double? distance = Elements[0].Primitive.Animation.GetCurrentProgress(Elements[0].Primitive.Figure);
-            //Math.Sqrt(
-            //Math.Pow(Canvas.GetLeft(Elements[0].Primitive.Figure) - Canvas.GetLeft(Elements[0].Placeholder.Figure), 2) +
-            //                   Math.Pow(Canvas.GetTop(Elements[0].Primitive.Figure) - Canvas.GetTop(Elements[0].Placeholder.Figure), 2));
-            double epsilon = 0.9;//100;
-            Console.WriteLine(distance);
+            string direction = buttonDirection as string;
+            if (direction == null)
+                throw new ArgumentNullException("keyType");
 
-            if (distance > epsilon)
+            KeyType key = (KeyType)Enum.Parse(typeof(KeyType), direction);
+
+            TimeSpan currentTime = Elements[0].Primitive.Animation.GetCurrentTime(Elements[0].Primitive.Figure).Value;
+            TimeSpan duration = Elements[0].Primitive.Animation.Children[0].Duration.TimeSpan + Elements[0].Primitive.Animation.Children[0].BeginTime.Value;
+
+            TimeSpan epsilon = TimeSpan.FromMilliseconds(100);
+
+            if (duration - currentTime < epsilon && Elements[0].Key == key)
             {
                 Elements[0].Status.TextElement.Style = (Style)Elements[0].Status.TextElement.FindResource("StatusGoodStyle");
                 Score += 100;

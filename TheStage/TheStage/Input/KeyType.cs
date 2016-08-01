@@ -8,8 +8,8 @@ namespace TheStage.Input
 {
     public enum KeyType
     {
-        Top,
         Left,
+        Top,        
         Right,
         Bottom
     }
