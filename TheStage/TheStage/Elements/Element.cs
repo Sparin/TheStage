@@ -14,13 +14,14 @@ using TheStage.Input;
 
 namespace TheStage.Elements
 {    
-    class Element
+    abstract class Element
     {
-        public KeyType Key { get; private set; }
-        
-        public Placeholder Placeholder { get; private set; }        
-        public Primitive Primitive { get; private set; }        
-        public Status Status { get; private set; }
+        internal KeyType Key { get; private set; }
+        internal virtual bool IsPassed { get; set; }
+
+        internal Placeholder Placeholder { get; private set; }
+        internal Primitive Primitive { get; private set; }
+        internal Status Status { get; private set; }
         
         public Element(KeyType type, Placeholder placeholder, Status status, Primitive primitive)
         {

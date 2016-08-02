@@ -84,9 +84,11 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Elements\DoubleElement.cs" />
     <Compile Include="Elements\Element.cs" />
     <Compile Include="Elements\Placeholder.cs" />
     <Compile Include="Elements\Primitive\Primitive.cs" />
+    <Compile Include="Elements\SingleElement.cs" />
     <Compile Include="Elements\Status.cs" />
     <Compile Include="Elements\Primitive\PrimitiveType.cs" />
     <Compile Include="Input\InputMap.cs" />

@@ -40,6 +40,13 @@ namespace TheStage.ViewModel
         public ObservableCollection<UIElement> GameObjects { get; private set; }
 
         #region Properties
+        private long comboMultiplyer = 1;
+        public long ComboMultiplyer
+        {
+            get { return comboMultiplyer; }
+            set { comboMultiplyer = value; RaisePropertyChanged(); }
+        }
+
         private long score = 0;
         public long Score
         {
@@ -61,7 +68,7 @@ namespace TheStage.ViewModel
             set { height = value; RaisePropertyChanged(); }
         }
         #endregion
-        
+
         public Command RightPadPressedCommand { get; private set; }
         public Command LeftPadPressedCommand { get; private set; }
 
@@ -127,18 +134,29 @@ namespace TheStage.ViewModel
                 string[] arguments = objects[i].Split(';');
 
                 //Get and set start point and end point from the path
-                MatchCollection points = Regex.Matches(arguments[1], @"(-?\d* *, *-?\d*)");
+                MatchCollection points = Regex.Matches(arguments[2], @"(-?\d* *, *-?\d*)");
                 Point startPoint = Point.Parse(points[0].Value);
                 Point endPoint = Point.Parse(points[points.Count - 1].Value);
-                int beginTime = int.Parse(arguments[2]);
-                int duration = int.Parse(arguments[3]);
+                int beginTime = int.Parse(arguments[3]);
+                int duration = int.Parse(arguments[4]);
 
-                PrimitiveType type = (PrimitiveType)Enum.Parse(typeof(PrimitiveType), arguments[0]);
+                PrimitiveType type = (PrimitiveType)Enum.Parse(typeof(PrimitiveType), arguments[1]);
                 Placeholder placeholder = new Placeholder(type, TimeSpan.FromMilliseconds(beginTime));
                 Status status = new Status(endPoint);
-                Primitive primitive = new Primitive(type, arguments[1], TimeSpan.FromMilliseconds(beginTime), TimeSpan.FromMilliseconds(duration));
+                Primitive primitive = new Primitive(type, arguments[2], TimeSpan.FromMilliseconds(beginTime), TimeSpan.FromMilliseconds(duration));
 
-                Element element = new Element((KeyType)type, placeholder, status, primitive);
+                Element element;
+                switch (arguments[0])
+                {
+                    case "SingleElement":
+                        element = new SingleElement((KeyType)type, placeholder, status, primitive);
+                        break;
+                    case "DoubleElement":
+                        element = new DoubleElement((KeyType)type, placeholder, status, primitive);
+                        break;
+                    default:
+                        throw new ArgumentException("Element Type: " + arguments[0]);
+                }
 
                 Canvas.SetLeft(primitive.Figure, startPoint.X);
                 Canvas.SetTop(primitive.Figure, startPoint.Y);
@@ -168,25 +186,74 @@ namespace TheStage.ViewModel
 
             string direction = buttonDirection as string;
             if (direction == null)
-                throw new ArgumentNullException("keyType");
+                throw new ArgumentNullException("buttonDirection");
 
             KeyType key = (KeyType)Enum.Parse(typeof(KeyType), direction);
 
             TimeSpan currentTime = Elements[0].Primitive.Animation.GetCurrentTime(Elements[0].Primitive.Figure).Value;
             TimeSpan duration = Elements[0].Primitive.Animation.Children[0].Duration.TimeSpan + Elements[0].Primitive.Animation.Children[0].BeginTime.Value;
+            TimeSpan diff = duration - currentTime;
+            TimeSpan epsilon = TimeSpan.FromMilliseconds(200);
 
-            TimeSpan epsilon = TimeSpan.FromMilliseconds(100);
+            if (diff < epsilon && Elements[0].Key == key)
+                SetElementCondition(Elements[0], isRightPad);
 
-            if (duration - currentTime < epsilon && Elements[0].Key == key)
+            if (Elements[0].IsPassed)
             {
-                Elements[0].Status.TextElement.Style = (Style)Elements[0].Status.TextElement.FindResource("StatusGoodStyle");
-                Score += 100;
+                int qualityBeat = diff.Milliseconds / 25;
+                switch (qualityBeat)
+                {
+                    case 0://x < 50ms
+                    case 1:
+                        Elements[0].Status.TextElement.Style = (Style)Elements[0].Status.TextElement.FindResource("StatusExcellentStyle");
+                        Score += (100 * ComboMultiplyer);
+                        ComboMultiplyer++;
+                        break;
+                    case 2://x < 75ms 
+                        Elements[0].Status.TextElement.Style = (Style)Elements[0].Status.TextElement.FindResource("StatusGoodStyle");
+                        Score += (75 * ComboMultiplyer);
+                        ComboMultiplyer++;
+                        break;
+                    case 3://x < 100ms
+                        Elements[0].Status.TextElement.Style = (Style)Elements[0].Status.TextElement.FindResource("StatusSafeStyle");
+                        Score += 50;
+                        ComboMultiplyer = 1;
+                        break;
+                    case 4://x < 150ms
+                    case 5:
+                        Elements[0].Status.TextElement.Style = (Style)Elements[0].Status.TextElement.FindResource("StatusAwfulStyle");
+                        Score += 10;
+                        ComboMultiplyer = 1;
+                        break;
+                    case 6://x < 200ms
+                    case 7:
+                        Elements[0].Status.TextElement.Style = (Style)Elements[0].Status.TextElement.FindResource("StatusBadStyle");
+                        ComboMultiplyer = 1;
+                        break;
+                }
+                if (Elements[0].Primitive.Animation.GetCurrentState(Elements[0].Primitive.Figure) == ClockState.Active)
+                    Elements[0].Primitive.Animation.SkipToFill(Elements[0].Primitive.Figure);
             }
-            else
-                Elements[0].Status.TextElement.Style = (Style)Elements[0].Status.TextElement.FindResource("StatusBadStyle");
 
-            if (Elements[0].Primitive.Animation.GetCurrentState(Elements[0].Primitive.Figure) == ClockState.Active)
-                Elements[0].Primitive.Animation.SkipToFill(Elements[0].Primitive.Figure);
+        }
+        private void SetElementCondition(Element element, bool isRightPad)
+        {
+            Type type = element.GetType();
+            switch (type.Name)
+            {
+                case "SingleElement":
+                    ((SingleElement)element).IsPressed = true;
+                    break;
+                case "DoubleElement":
+                    DoubleElement local = (DoubleElement)element;
+                    if (isRightPad)
+                        local.RightPadPressed = true;
+                    else
+                        local.LeftPadPressed = true;
+                    break;
+                default:
+                    throw new NotImplementedException("Element Type: " + element.GetType());
+            }
         }
 
         #region MVVM Related

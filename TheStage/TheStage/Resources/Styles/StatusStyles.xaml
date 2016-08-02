@@ -4,12 +4,18 @@
     <Style x:Key="StatusBaseStyle">
         <Setter Property="TextBlock.FontFamily" Value="Impact"/>
         <Setter Property="TextBlock.FontSize" Value="24"/>
+        <Setter Property="TextBlock.Effect">
+            <Setter.Value>
+                <DropShadowEffect ShadowDepth="0" BlurRadius="10"/>
+            </Setter.Value>
+        </Setter>
     </Style>
-    <Style x:Key="StatusBadStyle" BasedOn="{StaticResource StatusBaseStyle}">
-        <Setter Property="TextBlock.Text" Value="BAD"/>
+    
+    <Style x:Key="StatusExcellentStyle" BasedOn="{StaticResource StatusBaseStyle}">
+        <Setter Property="TextBlock.Text" Value="EXCELLENT"/>
         <Setter Property="TextBlock.Foreground">
             <Setter.Value>
-                <SolidColorBrush Color="DarkRed"/>
+                <SolidColorBrush Color="Gold"/>
             </Setter.Value>
         </Setter>
     </Style>
@@ -17,15 +23,39 @@
         <Setter Property="TextBlock.Text" Value="GOOD"/>
         <Setter Property="TextBlock.Foreground">
             <Setter.Value>
+                <SolidColorBrush Color="Lime"/>
+            </Setter.Value>
+        </Setter>
+    </Style>
+    <Style x:Key="StatusSafeStyle" BasedOn="{StaticResource StatusBaseStyle}">
+        <Setter Property="TextBlock.Text" Value="SAFE"/>
+        <Setter Property="TextBlock.Foreground">
+            <Setter.Value>
                 <SolidColorBrush Color="Green"/>
             </Setter.Value>
         </Setter>
+    </Style>
+    <Style x:Key="StatusAwfulStyle" BasedOn="{StaticResource StatusBaseStyle}">
+        <Setter Property="TextBlock.Text" Value="AWFUL"/>
+        <Setter Property="TextBlock.Foreground">
+            <Setter.Value>
+                <SolidColorBrush Color="DarkSlateGray"/>
+            </Setter.Value>
+        </Setter>
+    </Style>
+    <Style x:Key="StatusBadStyle" BasedOn="{StaticResource StatusBaseStyle}">
+        <Setter Property="TextBlock.Text" Value="BAD"/>
+        <Setter Property="TextBlock.Foreground">
+            <Setter.Value>
+                <SolidColorBrush Color="DarkRed"/>
+            </Setter.Value>
+        </Setter>        
     </Style>
     <Style x:Key="StatusMissStyle" BasedOn="{StaticResource StatusBaseStyle}">
         <Setter Property="TextBlock.Text" Value="MISS"/>
         <Setter Property="TextBlock.Foreground">
             <Setter.Value>
-                <SolidColorBrush Color="Gold"/>
+                <SolidColorBrush Color="DarkGoldenrod"/>
             </Setter.Value>
         </Setter>
     </Style>
