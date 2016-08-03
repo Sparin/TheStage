@@ -25,8 +25,8 @@ namespace TheStage.ViewModel
 {
     class wndGameControllerViewModel : INotifyPropertyChanged
     {
-        //WIP
-        //TODO: Make a new class with placeholder, primitive, animations and status references 
+        const int POST_ANIMATION_MILLISECONDS = 150;
+
         private List<Element> Elements = new List<Element>();
 
         private MediaElement mediaPlayer = new MediaElement();
@@ -137,13 +137,14 @@ namespace TheStage.ViewModel
                 MatchCollection points = Regex.Matches(arguments[2], @"(-?\d* *, *-?\d*)");
                 Point startPoint = Point.Parse(points[0].Value);
                 Point endPoint = Point.Parse(points[points.Count - 1].Value);
-                int beginTime = int.Parse(arguments[3]);
-                int duration = int.Parse(arguments[4]);
+                TimeSpan beginTime = TimeSpan.FromMilliseconds(int.Parse(arguments[3]));
+                TimeSpan duration = TimeSpan.FromMilliseconds(int.Parse(arguments[4]) +150);
+                Geometry way = Geometry.Parse(arguments[2]);
 
                 PrimitiveType type = (PrimitiveType)Enum.Parse(typeof(PrimitiveType), arguments[1]);
-                Placeholder placeholder = new Placeholder(type, TimeSpan.FromMilliseconds(beginTime));
+                Placeholder placeholder = new Placeholder(type, beginTime);
                 Status status = new Status(endPoint);
-                Primitive primitive = new Primitive(type, arguments[2], TimeSpan.FromMilliseconds(beginTime), TimeSpan.FromMilliseconds(duration));
+                Primitive primitive = new Primitive(type, way, beginTime, duration);
 
                 Element element;
                 switch (arguments[0])
@@ -158,10 +159,14 @@ namespace TheStage.ViewModel
                         throw new ArgumentException("Element Type: " + arguments[0]);
                 }
 
+                Point placeholderPosition = new Point();
+                Point tgPlaceholder = new Point();
+                way.GetFlattenedPathGeometry().GetPointAtFractionLength(1 - TimeSpan.FromMilliseconds(150).TotalMilliseconds / duration.TotalMilliseconds, out placeholderPosition, out tgPlaceholder);
+
                 Canvas.SetLeft(primitive.Figure, startPoint.X);
                 Canvas.SetTop(primitive.Figure, startPoint.Y);
-                Canvas.SetLeft(placeholder.Figure, endPoint.X);
-                Canvas.SetTop(placeholder.Figure, endPoint.Y);
+                Canvas.SetLeft(placeholder.Figure, placeholderPosition.X);
+                Canvas.SetTop(placeholder.Figure, placeholderPosition.Y);
 
                 status.Animation.Completed += (s, e) => GameObjects.Remove(status.TextElement);
 
@@ -193,14 +198,19 @@ namespace TheStage.ViewModel
             TimeSpan currentTime = Elements[0].Primitive.Animation.GetCurrentTime(Elements[0].Primitive.Figure).Value;
             TimeSpan duration = Elements[0].Primitive.Animation.Children[0].Duration.TimeSpan + Elements[0].Primitive.Animation.Children[0].BeginTime.Value;
             TimeSpan diff = duration - currentTime;
-            TimeSpan epsilon = TimeSpan.FromMilliseconds(200);
+            TimeSpan epsilon = TimeSpan.FromMilliseconds(200+POST_ANIMATION_MILLISECONDS);
 
             if (diff < epsilon && Elements[0].Key == key)
                 SetElementCondition(Elements[0], isRightPad);
 
             if (Elements[0].IsPassed)
             {
-                int qualityBeat = diff.Milliseconds / 25;
+                int qualityBeat = 0;
+                if (diff.Milliseconds >= POST_ANIMATION_MILLISECONDS)
+                    qualityBeat = (diff.Milliseconds - POST_ANIMATION_MILLISECONDS) / 25;
+                else
+                    qualityBeat = Math.Abs(diff.Milliseconds - POST_ANIMATION_MILLISECONDS) / 25;
+
                 switch (qualityBeat)
                 {
                     case 0://x < 50ms
@@ -230,12 +240,13 @@ namespace TheStage.ViewModel
                         Elements[0].Status.TextElement.Style = (Style)Elements[0].Status.TextElement.FindResource("StatusBadStyle");
                         ComboMultiplyer = 1;
                         break;
+
                 }
                 if (Elements[0].Primitive.Animation.GetCurrentState(Elements[0].Primitive.Figure) == ClockState.Active)
                     Elements[0].Primitive.Animation.SkipToFill(Elements[0].Primitive.Figure);
             }
-
         }
+
         private void SetElementCondition(Element element, bool isRightPad)
         {
             Type type = element.GetType();
