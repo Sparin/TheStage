@@ -9,7 +9,7 @@ using System.Windows.Media.Animation;
 using System.Windows.Media.Effects;
 using System.Windows.Shapes;
 
-namespace TheStage.Elements
+namespace TheStage.Elements.Base
 {
     //WIP
     class Placeholder

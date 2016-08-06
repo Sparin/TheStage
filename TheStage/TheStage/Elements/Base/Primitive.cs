@@ -9,7 +9,7 @@ using System.Windows.Media;
 using System.Windows.Media.Animation;
 using System.Windows.Shapes;
 
-namespace TheStage.Elements
+namespace TheStage.Elements.Base
 {
     public class Primitive
     {
@@ -62,5 +62,13 @@ namespace TheStage.Elements
             Animation.Children.Add(dx);
             Animation.Children.Add(dy);
         }
+    }
+
+    public enum PrimitiveType
+    {
+        Square,
+        Triangle,
+        Circle,
+        Cross
     }
 }

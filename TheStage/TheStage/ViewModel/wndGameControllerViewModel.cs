@@ -20,6 +20,7 @@ using ShapePath = System.Windows.Shapes.Path;
 using System.Text.RegularExpressions;
 using TheStage.Input;
 using TheStage.Elements;
+using TheStage.Elements.Base;
 
 namespace TheStage.ViewModel
 {
@@ -40,6 +41,13 @@ namespace TheStage.ViewModel
         public ObservableCollection<UIElement> GameObjects { get; private set; }
 
         #region Properties
+        private bool isHaltMode;
+        public bool IsHaltMode
+        {
+            get { return isHaltMode; }
+            set { isHaltMode = value; RaisePropertyChanged(); }
+        }
+
         private long comboMultiplyer = 1;
         public long ComboMultiplyer
         {

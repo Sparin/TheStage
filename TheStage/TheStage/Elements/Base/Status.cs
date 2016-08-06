@@ -7,7 +7,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media.Animation;
 
-namespace TheStage.Elements
+namespace TheStage.Elements.Base
 {
     class Status
     {

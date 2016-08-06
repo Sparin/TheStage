@@ -12,7 +12,7 @@ using System.Xml.Serialization;
 using TheStage.Elements;
 using TheStage.Input;
 
-namespace TheStage.Elements
+namespace TheStage.Elements.Base
 {    
     abstract class Element
     {
