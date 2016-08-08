@@ -3,10 +3,20 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:ea="http://schemas.microsoft.com/expression/2010/interactions"
+        xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
         xmlns:local="clr-namespace:TheStage"
         mc:Ignorable="d"
         Title="{Binding Score}" Height="300" Width="300">
-    <Window.InputBindings>
+    <i:Interaction.Triggers>
+        <i:EventTrigger EventName="KeyDown">
+            <ea:CallMethodAction MethodName="KeyDown" TargetObject="{Binding}"/>
+        </i:EventTrigger>
+        <i:EventTrigger EventName="KeyUp">
+            <ea:CallMethodAction MethodName="KeyUp" TargetObject="{Binding}"/>
+        </i:EventTrigger>
+    </i:Interaction.Triggers>
+    <!--<Window.InputBindings>
         <KeyBinding Command="{Binding RightPadPressedCommand}"
                     CommandParameter="Bottom"
                     Key="{Binding LeftInputMap.Bottom}"/>
@@ -32,7 +42,7 @@
         <KeyBinding Command="{Binding LeftPadPressedCommand}"
                     CommandParameter="Top"
                     Key="{Binding RightInputMap.Top}"/>
-    </Window.InputBindings>
+    </Window.InputBindings>-->
     <Viewbox>
         <ItemsControl Width="{Binding Width}" Height="{Binding Height}" ItemsSource="{Binding GameObjects}">
             <ItemsControl.ItemsPanel>

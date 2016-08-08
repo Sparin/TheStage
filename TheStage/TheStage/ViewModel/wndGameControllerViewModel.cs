@@ -77,9 +77,6 @@ namespace TheStage.ViewModel
         }
         #endregion
 
-        public Command RightPadPressedCommand { get; private set; }
-        public Command LeftPadPressedCommand { get; private set; }
-
         public wndGameControllerViewModel(string levelDirectory)
         {
             GameObjects = new ObservableCollection<UIElement>();
@@ -116,10 +113,6 @@ namespace TheStage.ViewModel
 
             GameObjects.Add(mediaPlayer);
 
-            //Simple way to avoid multibinding
-            RightPadPressedCommand = new Command((obj) => ButtonPressed(obj, true));
-            LeftPadPressedCommand = new Command((obj) => ButtonPressed(obj, false));
-
             ReadMap(levelDirectory + "/map.csv");
 
             //TODO: Synchronization logic            
@@ -146,7 +139,7 @@ namespace TheStage.ViewModel
                 Point startPoint = Point.Parse(points[0].Value);
                 Point endPoint = Point.Parse(points[points.Count - 1].Value);
                 TimeSpan beginTime = TimeSpan.FromMilliseconds(int.Parse(arguments[3]));
-                TimeSpan duration = TimeSpan.FromMilliseconds(int.Parse(arguments[4]) +150);
+                TimeSpan duration = TimeSpan.FromMilliseconds(int.Parse(arguments[4]) + 150);
                 Geometry way = Geometry.Parse(arguments[2]);
 
                 PrimitiveType type = (PrimitiveType)Enum.Parse(typeof(PrimitiveType), arguments[1]);
@@ -192,22 +185,24 @@ namespace TheStage.ViewModel
             }
         }
 
-        public void ButtonPressed(object buttonDirection, bool isRightPad)
+        public void KeyDown(object sender, KeyEventArgs args)
         {
-            if (Elements.Count == 0)
+            InputMap map = GetInputMap(args.Key);
+            if (Elements.Count == 0 || map == null || isHaltMode)
                 return;
 
-            string direction = buttonDirection as string;
-            if (direction == null)
-                throw new ArgumentNullException("buttonDirection");
+            isHaltMode = true;
 
-            KeyType key = (KeyType)Enum.Parse(typeof(KeyType), direction);
+            bool isRightPad = true;
+            if (map == LeftInputMap)
+                isRightPad = false;
 
             TimeSpan currentTime = Elements[0].Primitive.Animation.GetCurrentTime(Elements[0].Primitive.Figure).Value;
             TimeSpan duration = Elements[0].Primitive.Animation.Children[0].Duration.TimeSpan + Elements[0].Primitive.Animation.Children[0].BeginTime.Value;
             TimeSpan diff = duration - currentTime;
-            TimeSpan epsilon = TimeSpan.FromMilliseconds(200+POST_ANIMATION_MILLISECONDS);
+            TimeSpan epsilon = TimeSpan.FromMilliseconds(200 + POST_ANIMATION_MILLISECONDS);
 
+            KeyType key = GetDirection(map, args.Key);
             if (diff < epsilon && Elements[0].Key == key)
                 SetElementCondition(Elements[0], isRightPad);
 
@@ -253,6 +248,28 @@ namespace TheStage.ViewModel
                 if (Elements[0].Primitive.Animation.GetCurrentState(Elements[0].Primitive.Figure) == ClockState.Active)
                     Elements[0].Primitive.Animation.SkipToFill(Elements[0].Primitive.Figure);
             }
+        }
+
+        public void KeyUp(object sender, KeyEventArgs args)
+        {
+            isHaltMode = false;
+        }
+
+        private InputMap GetInputMap(Key key)
+        {
+            if (LeftInputMap.Contains(key))
+                return LeftInputMap;
+            if (RightInputMap.Contains(key))
+                return RightInputMap;
+            return null;
+        }
+
+        private KeyType GetDirection(InputMap map, Key key)
+        {
+            for (int i = 1; i < 5; i++)
+                if (map[i] == key)
+                    return (KeyType)i;
+            return KeyType.None;
         }
 
         private void SetElementCondition(Element element, bool isRightPad)

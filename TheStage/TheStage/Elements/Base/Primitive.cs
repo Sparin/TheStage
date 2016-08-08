@@ -66,9 +66,9 @@ namespace TheStage.Elements.Base
 
     public enum PrimitiveType
     {
-        Square,
-        Triangle,
-        Circle,
-        Cross
+        Square=1,
+        Triangle=2,
+        Circle=3,
+        Cross=4
     }
 }
