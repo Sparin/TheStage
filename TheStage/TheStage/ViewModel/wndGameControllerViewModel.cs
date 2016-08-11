@@ -125,6 +125,16 @@ namespace TheStage.ViewModel
             var primitives = Elements.Select((x) => x.Primitive).ToList();
             for (int i = 0; i < primitives.Count; i++)
                 primitives[i].Animation.Begin(primitives[i].Figure, true);
+
+            var followers = Elements.Select((x) =>
+            {
+                if (x is HoldElement)
+                    return ((HoldElement)x).PrimitiveFollower;
+                return null;
+            }).Where((x) => x != null)
+            .ToList();
+            for (int i = 0; i < followers.Count; i++)
+                followers[i].Animation.Begin(followers[i].Figure, true);
         }
 
         private void ReadMap(string path)
@@ -156,6 +166,9 @@ namespace TheStage.ViewModel
                     case "DoubleElement":
                         element = new DoubleElement((KeyType)type, placeholder, status, primitive);
                         break;
+                    case "HoldElement":
+                        element = new HoldElement((KeyType)type, placeholder, status, primitive, TimeSpan.FromMilliseconds(int.Parse(arguments[5])));
+                        break;
                     default:
                         throw new ArgumentException("Element Type: " + arguments[0]);
                 }
@@ -171,16 +184,28 @@ namespace TheStage.ViewModel
 
                 status.Animation.Completed += (s, e) => GameObjects.Remove(status.TextElement);
 
-                primitive.Animation.Completed += (s, e) =>
-                {
-                    GameObjects.Add(status.TextElement);
-                    GameObjects.Remove(placeholder.Figure);
-                    GameObjects.Remove(primitive.Figure);
-                    Elements.Remove(element);
-                };
+                if (element is HoldElement)
+                    ((HoldElement)element).PrimitiveFollower.Animation.Completed += (s, e) =>
+                    {
+                        GameObjects.Add(status.TextElement);
+                        GameObjects.Remove(placeholder.Figure);
+                        GameObjects.Remove(primitive.Figure);
+                        GameObjects.Remove(((HoldElement)element).PrimitiveFollower.Figure);
+                        Elements.Remove(element);
+                    };
+                else
+                    primitive.Animation.Completed += (s, e) =>
+                    {
+                        GameObjects.Add(status.TextElement);
+                        GameObjects.Remove(placeholder.Figure);
+                        GameObjects.Remove(primitive.Figure);
+                        Elements.Remove(element);
+                    };
 
                 GameObjects.Add(placeholder.Figure);
                 GameObjects.Add(primitive.Figure);
+                if (element is HoldElement)
+                    GameObjects.Add(((HoldElement)element).PrimitiveFollower.Figure);
                 Elements.Add(element);
             }
         }
@@ -191,7 +216,8 @@ namespace TheStage.ViewModel
             if (Elements.Count == 0 || map == null || isHaltMode)
                 return;
 
-            isHaltMode = true;
+            if (Elements[0] is HoldElement)
+                isHaltMode = true;
 
             bool isRightPad = true;
             if (map == LeftInputMap)

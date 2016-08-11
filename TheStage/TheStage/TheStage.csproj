@@ -90,6 +90,7 @@
     <Compile Include="Elements\Base\Element.cs" />
     <Compile Include="Elements\Base\Placeholder.cs" />
     <Compile Include="Elements\Base\Primitive.cs" />
+    <Compile Include="Elements\HoldElement.cs" />
     <Compile Include="Elements\SingleElement.cs" />
     <Compile Include="Elements\Base\Status.cs" />
     <Compile Include="Input\InputMap.cs" />
