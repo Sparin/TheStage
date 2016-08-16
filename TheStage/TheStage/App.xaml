@@ -7,7 +7,6 @@
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="Resources/Geometries/PrimitiveGeometry.xaml"/>
-                <ResourceDictionary Source="Resources/Styles/PrimitiveStyles.xaml"/>
                 <ResourceDictionary Source="Resources/Styles/StatusStyles.xaml"/>
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>

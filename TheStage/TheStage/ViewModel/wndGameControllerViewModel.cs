@@ -125,16 +125,6 @@ namespace TheStage.ViewModel
             var primitives = Elements.Select((x) => x.Primitive).ToList();
             for (int i = 0; i < primitives.Count; i++)
                 primitives[i].Animation.Begin(primitives[i].Figure, true);
-
-            var followers = Elements.Select((x) =>
-            {
-                if (x is HoldElement)
-                    return ((HoldElement)x).PrimitiveFollower;
-                return null;
-            }).Where((x) => x != null)
-            .ToList();
-            for (int i = 0; i < followers.Count; i++)
-                followers[i].Animation.Begin(followers[i].Figure, true);
         }
 
         private void ReadMap(string path)
@@ -183,17 +173,7 @@ namespace TheStage.ViewModel
                 Canvas.SetTop(placeholder.Figure, placeholderPosition.Y);
 
                 status.Animation.Completed += (s, e) => GameObjects.Remove(status.TextElement);
-
-                if (element is HoldElement)
-                    ((HoldElement)element).PrimitiveFollower.Animation.Completed += (s, e) =>
-                    {
-                        GameObjects.Add(status.TextElement);
-                        GameObjects.Remove(placeholder.Figure);
-                        GameObjects.Remove(primitive.Figure);
-                        GameObjects.Remove(((HoldElement)element).PrimitiveFollower.Figure);
-                        Elements.Remove(element);
-                    };
-                else
+                
                     primitive.Animation.Completed += (s, e) =>
                     {
                         GameObjects.Add(status.TextElement);
@@ -204,8 +184,6 @@ namespace TheStage.ViewModel
 
                 GameObjects.Add(placeholder.Figure);
                 GameObjects.Add(primitive.Figure);
-                if (element is HoldElement)
-                    GameObjects.Add(((HoldElement)element).PrimitiveFollower.Figure);
                 Elements.Add(element);
             }
         }

@@ -14,9 +14,17 @@ namespace TheStage.Elements.Base
     public class Primitive
     {
         public Geometry WayOfAnimation { get; set; }
-        public Path Figure { get; private set; }
+        public Viewbox Figure { get; private set; }
         public PrimitiveType Type { get; private set; }
         public Storyboard Animation { get; private set; }
+
+        static public ResourceDictionary Geometries { get; private set; }
+
+        static Primitive()
+        {
+            Geometries = new ResourceDictionary();
+            Geometries.Source = new Uri("Resources/Geometries/PrimitiveGeometry.xaml", UriKind.RelativeOrAbsolute);
+        }
 
         public Primitive(PrimitiveType type, string wayOfAnimation, TimeSpan beginTime, TimeSpan duration) :
             this(type, Geometry.Parse(wayOfAnimation), beginTime, duration)
@@ -33,9 +41,8 @@ namespace TheStage.Elements.Base
 
         private void FigureSetup(PrimitiveType type)
         {
-            Figure = new Path();
-            Figure.Data = (Geometry)Figure.FindResource(type.ToString("G"));
-            Figure.Style = (Style)Figure.FindResource(type.ToString("G") + "Style");
+            Figure = new Viewbox();
+            Figure = Geometries[Type.ToString("G")] as Viewbox;
         }
 
         private void AnimationSetup(TimeSpan beginTime, TimeSpan duration)
