@@ -21,6 +21,7 @@ using System.Text.RegularExpressions;
 using TheStage.Input;
 using TheStage.Elements;
 using TheStage.Elements.Base;
+using TheStage.Elements.Base.Factories;
 
 namespace TheStage.ViewModel
 {
@@ -29,8 +30,8 @@ namespace TheStage.ViewModel
         const int POST_ANIMATION_MILLISECONDS = 150;
 
         private List<Element> Elements = new List<Element>();
-
         private MediaElement mediaPlayer = new MediaElement();
+        public ObservableCollection<UIElement> GameObjects { get; private set; }
 
         private InputMap leftInputMap;
         public InputMap LeftInputMap { get { return leftInputMap; } set { leftInputMap = value; RaisePropertyChanged(); } }
@@ -38,7 +39,7 @@ namespace TheStage.ViewModel
         private InputMap rightInputMap;
         public InputMap RightInputMap { get { return rightInputMap; } set { rightInputMap = value; RaisePropertyChanged(); } }
 
-        public ObservableCollection<UIElement> GameObjects { get; private set; }
+        
 
         #region Properties
         private bool isHaltMode;
@@ -125,10 +126,18 @@ namespace TheStage.ViewModel
             var primitives = Elements.Select((x) => x.Primitive).ToList();
             for (int i = 0; i < primitives.Count; i++)
                 primitives[i].Animation.Begin(primitives[i].Figure, true);
+
+            var holdElements = Elements.Select((x) => x as HoldElement).Where((x) => x is HoldElement).ToList();
+            for (int i = 0; i < holdElements.Count; i++)
+                holdElements[i].TextElement.BeginStoryboard(holdElements[i].TimerAnimation, HandoffBehavior.Compose, true);
         }
 
         private void ReadMap(string path)
         {
+            SingleFactory singleFactory = new SingleFactory();
+            HoldFactory holdFactory = new HoldFactory();
+            DoubleFactory doubleFactory = new DoubleFactory();
+
             string[] objects = File.ReadAllLines(path);
             for (int i = 0; i < objects.Length; i++)
             {
@@ -143,20 +152,26 @@ namespace TheStage.ViewModel
                 Geometry way = Geometry.Parse(arguments[2]);
 
                 PrimitiveType type = (PrimitiveType)Enum.Parse(typeof(PrimitiveType), arguments[1]);
-                Placeholder placeholder = new Placeholder(type, beginTime);
                 Status status = new Status(endPoint);
-                Primitive primitive = new Primitive(type, way, beginTime, duration);
+                Placeholder placeholder;
+                Primitive primitive; 
 
                 Element element;
                 switch (arguments[0])
                 {
                     case "SingleElement":
+                        placeholder = new Placeholder(singleFactory,type, beginTime);
+                        primitive = new Primitive(singleFactory, type, way, beginTime, duration);
                         element = new SingleElement((KeyType)type, placeholder, status, primitive);
                         break;
                     case "DoubleElement":
+                        placeholder = new Placeholder(doubleFactory, type, beginTime);
+                        primitive = new Primitive(doubleFactory, type, way, beginTime, duration);
                         element = new DoubleElement((KeyType)type, placeholder, status, primitive);
                         break;
                     case "HoldElement":
+                        placeholder = new Placeholder(holdFactory, type, beginTime);
+                        primitive = new Primitive(holdFactory, type, way, beginTime, duration); 
                         element = new HoldElement((KeyType)type, placeholder, status, primitive, TimeSpan.FromMilliseconds(int.Parse(arguments[5])));
                         break;
                     default:
@@ -172,8 +187,31 @@ namespace TheStage.ViewModel
                 Canvas.SetLeft(placeholder.Figure, placeholderPosition.X);
                 Canvas.SetTop(placeholder.Figure, placeholderPosition.Y);
 
-                status.Animation.Completed += (s, e) => GameObjects.Remove(status.TextElement);
-                
+                //WIP
+                if (element is HoldElement)
+                {
+                    HoldElement el = element as HoldElement;
+                    el.Tst();
+                    //[0]; [1] index is position animation
+                    element.Primitive.Animation.Children[0].Completed += (s, e) =>
+                    {
+                        GameObjects.Add(el.FirstStatus.TextElement);
+                        GameObjects.Remove(primitive.Figure);
+                        if (!el.IsKeyDownSuccess)
+                            if (el.TimerAnimation.GetCurrentState(el.TextElement) == ClockState.Active)
+                                el.TimerAnimation.SkipToFill(el.TextElement);
+                    };
+                    el.TimerAnimation.Completed += (s, e) =>
+                    {
+                        GameObjects.Add(status.TextElement);
+                        GameObjects.Remove(placeholder.Figure);
+                        Elements.Remove(element);
+                    };
+                }
+                else
+                {
+                    status.Animation.Completed += (s, e) => GameObjects.Remove(status.TextElement);
+
                     primitive.Animation.Completed += (s, e) =>
                     {
                         GameObjects.Add(status.TextElement);
@@ -181,9 +219,22 @@ namespace TheStage.ViewModel
                         GameObjects.Remove(primitive.Figure);
                         Elements.Remove(element);
                     };
+                }
+
+                //status.Animation.Completed += (s, e) => GameObjects.Remove(status.TextElement);
+
+                //    primitive.Animation.Completed += (s, e) =>
+                //    {
+                //        GameObjects.Add(status.TextElement);
+                //        GameObjects.Remove(placeholder.Figure);
+                //        GameObjects.Remove(primitive.Figure);
+                //        Elements.Remove(element);
+                //    };
 
                 GameObjects.Add(placeholder.Figure);
                 GameObjects.Add(primitive.Figure);
+                if (element is HoldElement)
+                    GameObjects.Add(((HoldElement)element).TextElement);
                 Elements.Add(element);
             }
         }
@@ -290,6 +341,10 @@ namespace TheStage.ViewModel
                         local.RightPadPressed = true;
                     else
                         local.LeftPadPressed = true;
+                    break;
+                case "HoldElement":
+                    ((HoldElement)element).IsKeyDownSuccess = true;
+                    throw new NotImplementedException();
                     break;
                 default:
                     throw new NotImplementedException("Element Type: " + element.GetType());

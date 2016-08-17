@@ -9,32 +9,25 @@ using System.Windows.Media;
 using System.Windows.Media.Animation;
 using System.Windows.Media.Effects;
 using System.Windows.Shapes;
+using TheStage.Elements.Base.Factories;
 
 namespace TheStage.Elements.Base
 {
     //WIP
     class Placeholder
     {
-        public Viewbox Figure { get; private set; }
+        public Image Figure { get; private set; }
 
         public DoubleAnimation Animation { get; private set; }
 
         public PrimitiveType Type { get; private set; }
 
-        static public ResourceDictionary Geometries { get; private set; }
-
-        static Placeholder()
-        {
-            Geometries = new ResourceDictionary();
-            Geometries.Source = new Uri("Resources/Geometries/PlaceholderGeometry.xaml", UriKind.RelativeOrAbsolute);
-        }
-
-        public Placeholder(PrimitiveType type, TimeSpan beginTime)
+        public Placeholder(ElementFactory factory, PrimitiveType type, TimeSpan beginTime)
         {
             Type = type;
 
             AnimationSetup(beginTime);
-            FigureSetup();
+            FigureSetup(factory);
         }
 
         private void AnimationSetup(TimeSpan beginTime)
@@ -43,10 +36,10 @@ namespace TheStage.Elements.Base
             Animation.BeginTime = beginTime;
         }
 
-        private void FigureSetup()
+        private void FigureSetup(ElementFactory factory)
         {
-            Figure = new Viewbox();
-            Figure = Geometries[Type.ToString("G")] as Viewbox;
+            Figure = new Image();
+            Figure.Source = factory.Placeholders[Type];
             Figure.Opacity = 0;
             DropShadowEffect ds = new DropShadowEffect();
             ds.Color = Color.FromRgb(0, 0, 0);
