@@ -41,7 +41,8 @@ namespace TheStage.Elements
                 Width = 75,
                 Height = 30,
                 FontSize = 26,
-                TextAlignment = System.Windows.TextAlignment.Center
+                TextAlignment = System.Windows.TextAlignment.Center,
+                Opacity = 0
             };
 
             AnimationSetup();
@@ -50,28 +51,36 @@ namespace TheStage.Elements
         public void Tst()
         {
             Canvas.SetLeft(TextElement, Canvas.GetLeft(Placeholder.Figure));
-            Canvas.SetTop(TextElement, Canvas.GetTop(Placeholder.Figure) + 70);
+            Canvas.SetTop(TextElement, Canvas.GetTop(Placeholder.Figure) + 67.5);
         }
 
         private void AnimationSetup()
-        {
+        {   
             TimerAnimation = new Storyboard();
+
+            DoubleAnimation opacity = new DoubleAnimation(0, 1, TimeSpan.FromMilliseconds(200));
+            opacity.BeginTime = Placeholder.Animation.BeginTime;
+            Storyboard.SetTargetProperty(opacity, new PropertyPath(TextBlock.OpacityProperty));
+
+
             StringAnimationUsingKeyFrames animation = new StringAnimationUsingKeyFrames();
-            animation.KeyFrames = GetFrameCollection(Duration.TotalSeconds);
-            animation.Duration = Duration;
+            animation.KeyFrames = GetFrameCollection(Duration.TotalMilliseconds);
+            animation.Duration = Duration +TimeSpan.FromMilliseconds(150);
             //[0]; [1] - Position animation
             animation.BeginTime = Primitive.Animation.Children[0].BeginTime + Primitive.Animation.Children[0].Duration.TimeSpan;
             Storyboard.SetTargetProperty(animation, new PropertyPath(TextBlock.TextProperty));
             TimerAnimation.Children.Add(animation);
+            TimerAnimation.Children.Add(opacity);
         }
 
         StringKeyFrameCollection GetFrameCollection(double duration)
         {
             StringKeyFrameCollection result = new StringKeyFrameCollection();
 
-            for (; duration >= 0; duration -= 0.1)
-                result.Add(new DiscreteStringKeyFrame(String.Format("{0:0.0}", duration)));
-
+            for (int i = Convert.ToInt32(duration); i>= -100; i -= 100)
+                result.Add(new DiscreteStringKeyFrame(String.Format("{0:0.0}", Convert.ToDouble(i)/1000)));
+            result.Add(new DiscreteStringKeyFrame("-0.15"));
+            
             return result;
         }
     }

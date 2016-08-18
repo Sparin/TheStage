@@ -39,14 +39,14 @@ namespace TheStage.ViewModel
         private InputMap rightInputMap;
         public InputMap RightInputMap { get { return rightInputMap; } set { rightInputMap = value; RaisePropertyChanged(); } }
 
-        
+
 
         #region Properties
-        private bool isHaltMode;
-        public bool IsHaltMode
+        private bool isHoldOn = false;
+        public bool IsHoldOn
         {
-            get { return isHaltMode; }
-            set { isHaltMode = value; RaisePropertyChanged(); }
+            get { return isHoldOn; }
+            set { isHoldOn = value;  RaisePropertyChanged(); }
         }
 
         private long comboMultiplyer = 1;
@@ -154,13 +154,13 @@ namespace TheStage.ViewModel
                 PrimitiveType type = (PrimitiveType)Enum.Parse(typeof(PrimitiveType), arguments[1]);
                 Status status = new Status(endPoint);
                 Placeholder placeholder;
-                Primitive primitive; 
+                Primitive primitive;
 
                 Element element;
                 switch (arguments[0])
                 {
                     case "SingleElement":
-                        placeholder = new Placeholder(singleFactory,type, beginTime);
+                        placeholder = new Placeholder(singleFactory, type, beginTime);
                         primitive = new Primitive(singleFactory, type, way, beginTime, duration);
                         element = new SingleElement((KeyType)type, placeholder, status, primitive);
                         break;
@@ -171,7 +171,7 @@ namespace TheStage.ViewModel
                         break;
                     case "HoldElement":
                         placeholder = new Placeholder(holdFactory, type, beginTime);
-                        primitive = new Primitive(holdFactory, type, way, beginTime, duration); 
+                        primitive = new Primitive(holdFactory, type, way, beginTime, duration);
                         element = new HoldElement((KeyType)type, placeholder, status, primitive, TimeSpan.FromMilliseconds(int.Parse(arguments[5])));
                         break;
                     default:
@@ -205,6 +205,7 @@ namespace TheStage.ViewModel
                     {
                         GameObjects.Add(status.TextElement);
                         GameObjects.Remove(placeholder.Figure);
+                        GameObjects.Remove(el.TextElement);
                         Elements.Remove(element);
                     };
                 }
@@ -242,11 +243,8 @@ namespace TheStage.ViewModel
         public void KeyDown(object sender, KeyEventArgs args)
         {
             InputMap map = GetInputMap(args.Key);
-            if (Elements.Count == 0 || map == null || isHaltMode)
+            if (Elements.Count == 0 || map == null|| isHoldOn)
                 return;
-
-            if (Elements[0] is HoldElement)
-                isHaltMode = true;
 
             bool isRightPad = true;
             if (map == LeftInputMap)
@@ -261,7 +259,7 @@ namespace TheStage.ViewModel
             if (diff < epsilon && Elements[0].Key == key)
                 SetElementCondition(Elements[0], isRightPad);
 
-            if (Elements[0].IsPassed)
+            if (Elements[0].IsPassed || (Elements[0] is HoldElement && Elements[0].Key == key))
             {
                 int qualityBeat = 0;
                 if (diff.Milliseconds >= POST_ANIMATION_MILLISECONDS)
@@ -269,45 +267,93 @@ namespace TheStage.ViewModel
                 else
                     qualityBeat = Math.Abs(diff.Milliseconds - POST_ANIMATION_MILLISECONDS) / 25;
 
-                switch (qualityBeat)
+                Status status = Elements[0].Status;
+                if (Elements[0] is HoldElement)
                 {
-                    case 0://x < 50ms
-                    case 1:
-                        Elements[0].Status.TextElement.Style = (Style)Elements[0].Status.TextElement.FindResource("StatusExcellentStyle");
-                        Score += (100 * ComboMultiplyer);
-                        ComboMultiplyer++;
-                        break;
-                    case 2://x < 75ms 
-                        Elements[0].Status.TextElement.Style = (Style)Elements[0].Status.TextElement.FindResource("StatusGoodStyle");
-                        Score += (75 * ComboMultiplyer);
-                        ComboMultiplyer++;
-                        break;
-                    case 3://x < 100ms
-                        Elements[0].Status.TextElement.Style = (Style)Elements[0].Status.TextElement.FindResource("StatusSafeStyle");
-                        Score += 50;
-                        ComboMultiplyer = 1;
-                        break;
-                    case 4://x < 150ms
-                    case 5:
-                        Elements[0].Status.TextElement.Style = (Style)Elements[0].Status.TextElement.FindResource("StatusAwfulStyle");
-                        Score += 10;
-                        ComboMultiplyer = 1;
-                        break;
-                    case 6://x < 200ms
-                    case 7:
-                        Elements[0].Status.TextElement.Style = (Style)Elements[0].Status.TextElement.FindResource("StatusBadStyle");
-                        ComboMultiplyer = 1;
-                        break;
-
+                    status = ((HoldElement)Elements[0]).FirstStatus;
+                    IsHoldOn = true;
                 }
+
+                InvalidateQuality(status, qualityBeat);
+
                 if (Elements[0].Primitive.Animation.GetCurrentState(Elements[0].Primitive.Figure) == ClockState.Active)
                     Elements[0].Primitive.Animation.SkipToFill(Elements[0].Primitive.Figure);
             }
         }
 
         public void KeyUp(object sender, KeyEventArgs args)
+        {            
+            InputMap map = GetInputMap(args.Key);
+            if (Elements.Count == 0 || map == null)
+                return;
+            if (Elements[0] is HoldElement)
+            {
+                HoldElement element = Elements[0] as HoldElement;
+
+                bool isRightPad = true;
+                if (map == LeftInputMap)
+                    isRightPad = false;
+
+                TimeSpan currentTime = element.TimerAnimation.GetCurrentTime(element.TextElement).Value;
+                TimeSpan duration = element.TimerAnimation.Children[0].Duration.TimeSpan + element.TimerAnimation.Children[0].BeginTime.Value;
+                TimeSpan diff = duration - currentTime;
+                //POST_ANIMATION_MILLISECONDS for HoldElement timer is 100
+                TimeSpan epsilon = TimeSpan.FromMilliseconds(200 + POST_ANIMATION_MILLISECONDS);
+
+                KeyType key = GetDirection(map, args.Key);
+                if (diff < epsilon && Elements[0].Key == key)
+                    SetElementCondition(Elements[0], isRightPad,true);
+
+                if (Elements[0].IsPassed)
+                {
+                    int qualityBeat = 0;
+                    if (diff.Milliseconds >= POST_ANIMATION_MILLISECONDS)
+                        qualityBeat = (diff.Milliseconds - POST_ANIMATION_MILLISECONDS) / 25;
+                    else
+                        qualityBeat = Math.Abs(diff.Milliseconds - POST_ANIMATION_MILLISECONDS) / 25;
+
+                    Status status = Elements[0].Status;
+
+                    InvalidateQuality(status, qualityBeat);                    
+                }
+                if (element.TimerAnimation.GetCurrentState(element.TextElement) == ClockState.Active && IsHoldOn)
+                    element.TimerAnimation.SkipToFill(element.TextElement);
+                IsHoldOn = false;
+            }
+        }
+
+        private void InvalidateQuality(Status status, int qualityBeat)
         {
-            isHaltMode = false;
+            switch (qualityBeat)
+            {
+                case 0://x < 50ms
+                case 1:
+                    status.TextElement.Style = (Style)status.TextElement.FindResource("StatusExcellentStyle");
+                    Score += (100 * ComboMultiplyer);
+                    ComboMultiplyer++;
+                    break;
+                case 2://x < 75ms 
+                    status.TextElement.Style = (Style)status.TextElement.FindResource("StatusGoodStyle");
+                    Score += (75 * ComboMultiplyer);
+                    ComboMultiplyer++;
+                    break;
+                case 3://x < 100ms
+                    status.TextElement.Style = (Style)status.TextElement.FindResource("StatusSafeStyle");
+                    Score += 50;
+                    ComboMultiplyer = 1;
+                    break;
+                case 4://x < 150ms
+                case 5:
+                    status.TextElement.Style = (Style)status.TextElement.FindResource("StatusAwfulStyle");
+                    Score += 10;
+                    ComboMultiplyer = 1;
+                    break;
+                case 6://x < 200ms
+                case 7:
+                    status.TextElement.Style = (Style)status.TextElement.FindResource("StatusBadStyle");
+                    ComboMultiplyer = 1;
+                    break;
+            }
         }
 
         private InputMap GetInputMap(Key key)
@@ -327,7 +373,7 @@ namespace TheStage.ViewModel
             return KeyType.None;
         }
 
-        private void SetElementCondition(Element element, bool isRightPad)
+        private void SetElementCondition(Element element, bool isRightPad, bool isKeyUp = false)
         {
             Type type = element.GetType();
             switch (type.Name)
@@ -343,8 +389,10 @@ namespace TheStage.ViewModel
                         local.LeftPadPressed = true;
                     break;
                 case "HoldElement":
-                    ((HoldElement)element).IsKeyDownSuccess = true;
-                    throw new NotImplementedException();
+                    if (!isKeyUp)
+                        ((HoldElement)element).IsKeyDownSuccess = true;
+                    else
+                        ((HoldElement)element).IsKeyUpSuccess = true;
                     break;
                 default:
                     throw new NotImplementedException("Element Type: " + element.GetType());
