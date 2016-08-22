@@ -62,6 +62,14 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Page Include="Controls\PauseMenu.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\ShortStatistics.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Resources\Styles\StatusStyles.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -79,6 +87,12 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Controls\MediaElementSL.cs" />
+    <Compile Include="Controls\PauseMenu.xaml.cs">
+      <DependentUpon>PauseMenu.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\ShortStatistics.xaml.cs">
+      <DependentUpon>ShortStatistics.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Elements\Base\Factories\DoubleFactory.cs" />
     <Compile Include="Elements\Base\Factories\ElementFactory.cs" />
     <Compile Include="Elements\Base\Factories\HoldFactory.cs" />
@@ -92,6 +106,7 @@
     <Compile Include="Elements\Base\Status.cs" />
     <Compile Include="Input\InputMap.cs" />
     <Compile Include="Input\KeyType.cs" />
+    <Compile Include="ViewModel\StatisticsViewModel.cs" />
     <Compile Include="ViewModel\wndGameControllerViewModel.cs" />
     <Compile Include="ViewModel\wndMenuViewModel.cs" />
     <Compile Include="wndGameController.xaml.cs">

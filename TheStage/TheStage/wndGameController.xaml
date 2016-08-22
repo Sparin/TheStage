@@ -8,6 +8,9 @@
         xmlns:local="clr-namespace:TheStage"
         mc:Ignorable="d"
         Title="{Binding Score}" Height="300" Width="300">
+    <Window.InputBindings>
+        <KeyBinding Command="{Binding PauseCommand}" Key="Esc"/>
+    </Window.InputBindings>
     <i:Interaction.Triggers>
         <i:EventTrigger EventName="KeyDown">
             <ea:CallMethodAction MethodName="KeyDown" TargetObject="{Binding}"/>
@@ -16,33 +19,6 @@
             <ea:CallMethodAction MethodName="KeyUp" TargetObject="{Binding}"/>
         </i:EventTrigger>
     </i:Interaction.Triggers>
-    <!--<Window.InputBindings>
-        <KeyBinding Command="{Binding RightPadPressedCommand}"
-                    CommandParameter="Bottom"
-                    Key="{Binding LeftInputMap.Bottom}"/>
-        <KeyBinding Command="{Binding RightPadPressedCommand}"
-                    CommandParameter="Left"
-                    Key="{Binding LeftInputMap.Left}"/>
-        <KeyBinding Command="{Binding RightPadPressedCommand}"
-                    CommandParameter="Right"
-                    Key="{Binding LeftInputMap.Right}"/>
-        <KeyBinding Command="{Binding RightPadPressedCommand}"
-                    CommandParameter="Top"
-                    Key="{Binding LeftInputMap.Top}"/>
-
-        <KeyBinding Command="{Binding LeftPadPressedCommand}"
-                    CommandParameter="Bottom"
-                    Key="{Binding RightInputMap.Bottom}"/>
-        <KeyBinding Command="{Binding LeftPadPressedCommand}"
-                    CommandParameter="Left"
-                    Key="{Binding RightInputMap.Left}"/>
-        <KeyBinding Command="{Binding LeftPadPressedCommand}"
-                    CommandParameter="Right"
-                    Key="{Binding RightInputMap.Right}"/>
-        <KeyBinding Command="{Binding LeftPadPressedCommand}"
-                    CommandParameter="Top"
-                    Key="{Binding RightInputMap.Top}"/>
-    </Window.InputBindings>-->
     <Viewbox>
         <ItemsControl Width="{Binding Width}" Height="{Binding Height}" ItemsSource="{Binding GameObjects}">
             <ItemsControl.ItemsPanel>

@@ -1,0 +1,45 @@
+﻿<UserControl x:Class="TheStage.Controls.PauseMenu"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:ea="http://schemas.microsoft.com/expression/2010/interactions"
+        xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+             xmlns:local="clr-namespace:TheStage.Controls"
+             xmlns:controls="clr-namespace:TheStage.Controls"
+             mc:Ignorable="d" 
+             Background="#55000000"
+             HorizontalAlignment="Stretch"
+             VerticalAlignment="Stretch"
+             d:DesignHeight="600" d:DesignWidth="800">
+    <UserControl.Resources>
+        <Style TargetType="Button">
+            <Setter Property="Margin" Value="5,5,5,0"/>
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="BorderBrush" Value="White"/>
+            <Setter Property="FontSize" Value="20"/>
+            <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+        </Style>
+    </UserControl.Resources>
+    <Grid Height="220" Width="350" >
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="{Binding Width, ElementName=shortStatistics}"/>
+            <ColumnDefinition/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="170"/>
+            <RowDefinition Height="50"/>
+        </Grid.RowDefinitions>
+        <controls:ShortStatistics x:Name="shortStatistics" Background="#55000000" Width="150" Height="170" Grid.Column="0" Grid.Row="0" Grid.RowSpan="2" VerticalAlignment="Top">
+            <controls:ShortStatistics.LayoutTransform>
+                <SkewTransform AngleY="-15" AngleX="0"/>
+            </controls:ShortStatistics.LayoutTransform>
+        </controls:ShortStatistics>
+        <StackPanel  Grid.Column="1" Background="#55000000" Height="200">
+            <Button x:Name="btnResume">Продолжить</Button>
+            <Button x:Name="btnRestart">Заново</Button>
+        </StackPanel>
+        <Button x:Name="btnBackToMenu" Grid.Column="1" VerticalAlignment="Bottom" Margin="5">В главное меню</Button>
+    </Grid>
+</UserControl>

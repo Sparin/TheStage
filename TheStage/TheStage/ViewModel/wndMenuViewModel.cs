@@ -14,12 +14,12 @@ namespace TheStage.ViewModel
         public string Title
         {
             get { return title; }
-            set { title = value;  RaisePropertyChanged(); }
+            set { title = value; RaisePropertyChanged(); }
         }
 
         public wndMenuViewModel()
         {
-            new wndGameController() { DataContext = new wndGameControllerViewModel(AppDomain.CurrentDomain.BaseDirectory+@"Resources\Missions\[Demo] Children of The Night") }.ShowDialog();
+            new wndGameController() { DataContext = new wndGameControllerViewModel(AppDomain.CurrentDomain.BaseDirectory + @"Resources\Missions\[Demo] Children of The Night") }.ShowDialog();
         }
 
         private void RaisePropertyChanged([CallerMemberName]string propertyName = "")

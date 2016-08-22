@@ -35,11 +35,15 @@ namespace TheStage.ViewModel
         private MediaElementSL mediaPlayer = new MediaElementSL();
         public ObservableCollection<UIElement> GameObjects { get; private set; }
 
+        PauseMenu pauseMenu;
+
         private InputMap leftInputMap;
         public InputMap LeftInputMap { get { return leftInputMap; } set { leftInputMap = value; RaisePropertyChanged(); } }
 
         private InputMap rightInputMap;
         public InputMap RightInputMap { get { return rightInputMap; } set { rightInputMap = value; RaisePropertyChanged(); } }
+
+        public Command PauseCommand { get { return new Command(Pause); } }
 
         #region Properties
         private bool isHoldOn = false;
@@ -56,23 +60,23 @@ namespace TheStage.ViewModel
             set { comboMultiplyer = value; RaisePropertyChanged(); }
         }
 
-        private long score = 0;
-        public long Score
+        private StatisticsViewModel stats = new StatisticsViewModel();
+        public StatisticsViewModel Stats
         {
-            get { return score; }
-            set { score = value; RaisePropertyChanged(); }
+            get { return stats; }
+            set { stats = value; RaisePropertyChanged(); }
         }
 
         public string LevelDirectory { get; private set; }
 
-        private double width=0;
+        private double width = 0;
         public double Width
         {
             get { return width; }
             set { width = value; RaisePropertyChanged(); }
         }
 
-        private double height=0;
+        private double height = 0;
         public double Height
         {
             get { return height; }
@@ -167,6 +171,7 @@ namespace TheStage.ViewModel
             if (mediaPlayer.CurrentState != MediaElementState.Stopped && mediaPlayer.CurrentState != MediaElementState.Closed)
                 return;
             Animations = new Dictionary<Storyboard, FrameworkElement>();
+            Stats = new StatisticsViewModel();
             mediaPlayer.Play();
 
             var placeholders = Elements.Select((x) => { Animations.Add(x.Placeholder.Animation, x.Placeholder.Figure); return x.Placeholder; }).ToList();
@@ -202,9 +207,18 @@ namespace TheStage.ViewModel
 
         private void Pause()
         {
+            if (GameObjects.Contains(pauseMenu))
+                return;
+
             mediaPlayer.Pause();
             foreach (KeyValuePair<Storyboard, FrameworkElement> pair in Animations)
                 pair.Key.Pause(pair.Value);
+
+            pauseMenu = new PauseMenu() { DataContext = Stats, Width = width, Height = height };
+            pauseMenu.Resume += ()=>{ GameObjects.Remove(pauseMenu); Resume(); };
+            pauseMenu.Restart += () => { GameObjects.Remove(pauseMenu); Stop(); Play(); };
+            pauseMenu.BackToMenu += () => { throw new NotImplementedException(); };
+            GameObjects.Add(pauseMenu);
         }
         #endregion
 
@@ -368,7 +382,7 @@ namespace TheStage.ViewModel
                 if (diff < epsilon && Elements[0].Key == key)
                     SetElementCondition(Elements[0], isRightPad, true);
 
-                if (Elements[0].IsPassed)
+                if (Elements[0].IsPassed && diff < epsilon && Elements[0].Key == key)
                 {
                     int qualityBeat = 0;
                     if (diff.Milliseconds >= POST_ANIMATION_MILLISECONDS)
@@ -393,28 +407,33 @@ namespace TheStage.ViewModel
                 case 0://x < 50ms
                 case 1:
                     status.TextElement.Style = (Style)status.TextElement.FindResource("StatusExcellentStyle");
-                    Score += (100 * ComboMultiplyer);
+                    Stats.Score += (100 * ComboMultiplyer);
+                    Stats.Excellent++;
                     ComboMultiplyer++;
                     break;
                 case 2://x < 75ms 
                     status.TextElement.Style = (Style)status.TextElement.FindResource("StatusGoodStyle");
-                    Score += (75 * ComboMultiplyer);
+                    Stats.Score += (75 * ComboMultiplyer);
+                    Stats.Good++;
                     ComboMultiplyer++;
                     break;
                 case 3://x < 100ms
                     status.TextElement.Style = (Style)status.TextElement.FindResource("StatusSafeStyle");
-                    Score += 50;
+                    Stats.Score += 50;
+                    Stats.Safe++;
                     ComboMultiplyer = 1;
                     break;
                 case 4://x < 150ms
                 case 5:
                     status.TextElement.Style = (Style)status.TextElement.FindResource("StatusAwfulStyle");
-                    Score += 10;
+                    Stats.Score += 10;
+                    Stats.Awful++;
                     ComboMultiplyer = 1;
                     break;
                 case 6://x < 200ms
                 case 7:
                     status.TextElement.Style = (Style)status.TextElement.FindResource("StatusBadStyle");
+                    Stats.Bad++;
                     ComboMultiplyer = 1;
                     break;
             }

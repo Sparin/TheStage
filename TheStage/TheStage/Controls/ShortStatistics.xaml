@@ -1,0 +1,30 @@
+﻿<UserControl x:Class="TheStage.Controls.ShortStatistics"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:TheStage.Controls"
+             mc:Ignorable="d">
+    <StackPanel>
+        <StackPanel Orientation="Horizontal" Margin="5">
+            <TextBlock Style="{StaticResource StatusBaseStyle}" Effect="{x:Null}" Foreground="White" FontSize="20" Text="{Binding Excellent, ValidatesOnExceptions=True,StringFormat={}{0:D3} -}" Margin="0,0,5,0"/>
+            <TextBlock Style="{StaticResource StatusExcellentStyle}" FontSize="20"/>
+        </StackPanel>
+        <StackPanel Orientation="Horizontal" Margin="5">
+            <TextBlock Style="{StaticResource StatusBaseStyle}" Effect="{x:Null}" Foreground="White" FontSize="20" Text="{Binding Good, ValidatesOnExceptions=True,StringFormat={}{0:D3} -}" Margin="0,0,5,0"/>
+            <TextBlock Style="{StaticResource StatusGoodStyle}" FontSize="20"/>
+        </StackPanel>
+        <StackPanel Orientation="Horizontal" Margin="5">
+            <TextBlock Style="{StaticResource StatusBaseStyle}" Effect="{x:Null}" Foreground="White" FontSize="20" Text="{Binding Safe, ValidatesOnExceptions=True,StringFormat={}{0:D3} -}" Margin="0,0,5,0"/>
+            <TextBlock Style="{StaticResource StatusSafeStyle}" FontSize="20"/>
+        </StackPanel>
+        <StackPanel Orientation="Horizontal" Margin="5">
+            <TextBlock Style="{StaticResource StatusBaseStyle}" Effect="{x:Null}" Foreground="White" FontSize="20" Text="{Binding Awful, ValidatesOnExceptions=True,StringFormat={}{0:D3} -}" Margin="0,0,5,0"/>
+            <TextBlock Style="{StaticResource StatusAwfulStyle}" FontSize="20"/>
+        </StackPanel>
+        <StackPanel Orientation="Horizontal" Margin="5">
+            <TextBlock Style="{StaticResource StatusBaseStyle}" Effect="{x:Null}" Foreground="White" FontSize="20" Text="{Binding Bad, ValidatesOnExceptions=True,StringFormat={}{0:D3} -}" Margin="0,0,5,0"/>
+            <TextBlock Style="{StaticResource StatusBadStyle}" FontSize="20"/>
+        </StackPanel>
+    </StackPanel>
+</UserControl>
