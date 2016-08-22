@@ -78,6 +78,7 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Controls\MediaElementSL.cs" />
     <Compile Include="Elements\Base\Factories\DoubleFactory.cs" />
     <Compile Include="Elements\Base\Factories\ElementFactory.cs" />
     <Compile Include="Elements\Base\Factories\HoldFactory.cs" />

@@ -22,6 +22,7 @@ using TheStage.Input;
 using TheStage.Elements;
 using TheStage.Elements.Base;
 using TheStage.Elements.Base.Factories;
+using TheStage.Controls;
 
 namespace TheStage.ViewModel
 {
@@ -29,8 +30,9 @@ namespace TheStage.ViewModel
     {
         const int POST_ANIMATION_MILLISECONDS = 150;
 
+        private Dictionary<Storyboard, FrameworkElement> Animations = new Dictionary<Storyboard, FrameworkElement>();
         private List<Element> Elements = new List<Element>();
-        private MediaElement mediaPlayer = new MediaElement();
+        private MediaElementSL mediaPlayer = new MediaElementSL();
         public ObservableCollection<UIElement> GameObjects { get; private set; }
 
         private InputMap leftInputMap;
@@ -39,14 +41,12 @@ namespace TheStage.ViewModel
         private InputMap rightInputMap;
         public InputMap RightInputMap { get { return rightInputMap; } set { rightInputMap = value; RaisePropertyChanged(); } }
 
-
-
         #region Properties
         private bool isHoldOn = false;
         public bool IsHoldOn
         {
             get { return isHoldOn; }
-            set { isHoldOn = value;  RaisePropertyChanged(); }
+            set { isHoldOn = value; RaisePropertyChanged(); }
         }
 
         private long comboMultiplyer = 1;
@@ -63,14 +63,16 @@ namespace TheStage.ViewModel
             set { score = value; RaisePropertyChanged(); }
         }
 
-        private double width;
+        public string LevelDirectory { get; private set; }
+
+        private double width=0;
         public double Width
         {
             get { return width; }
             set { width = value; RaisePropertyChanged(); }
         }
 
-        private double height;
+        private double height=0;
         public double Height
         {
             get { return height; }
@@ -80,8 +82,9 @@ namespace TheStage.ViewModel
 
         public wndGameControllerViewModel(string levelDirectory)
         {
-            GameObjects = new ObservableCollection<UIElement>();
+            LevelDirectory = levelDirectory;
 
+            //TODO: Sync input map with setting via menu
             LeftInputMap = new InputMap();
             LeftInputMap.Bottom = Key.S;
             LeftInputMap.Left = Key.A;
@@ -94,43 +97,116 @@ namespace TheStage.ViewModel
             RightInputMap.Top = Key.I;
             RightInputMap.Right = Key.L;
 
-            if (!Directory.Exists(levelDirectory))
-                throw new DirectoryNotFoundException(levelDirectory);
-            string videoPath = Directory.GetFiles(levelDirectory, "video.*", SearchOption.TopDirectoryOnly).FirstOrDefault();
+            Load();
+
+            Play();
+        }
+
+        private Button CreateButton(string content, Action clickDelegate)
+        {
+            Button result = new Button();
+            result.Height = 50;
+            result.Width = 100;
+            result.Content = content;
+            result.Click += (s, e) => clickDelegate();
+
+            return result;
+        }
+
+        private void Load()
+        {
+            if (GameObjects != null)
+                GameObjects.Clear();
+            else
+                GameObjects = new ObservableCollection<UIElement>();
+            Elements = new List<Element>();
+            mediaPlayer = new MediaElementSL();
+
+            if (!Directory.Exists(LevelDirectory))
+                throw new DirectoryNotFoundException(LevelDirectory);
+            string videoPath = Directory.GetFiles(LevelDirectory, "video.*", SearchOption.TopDirectoryOnly).FirstOrDefault();
             if (videoPath == string.Empty)
                 throw new FileNotFoundException("video.* not found");
-            if (!File.Exists(levelDirectory + "/map.csv"))
+            if (!File.Exists(LevelDirectory + "/map.csv"))
                 throw new FileNotFoundException("map.csv not found");
-
-            //TODO: Get Dimensions of media file
-            Width = 1920;
-            Height = 1080;
 
             mediaPlayer.Source = new Uri(videoPath, UriKind.Absolute);
             mediaPlayer.LoadedBehavior = MediaState.Manual;
             mediaPlayer.Stretch = Stretch.UniformToFill;
-            mediaPlayer.Width = width;
-            mediaPlayer.Height = height;
+            mediaPlayer.MediaOpened += (s, e) =>
+            {
+                Width = mediaPlayer.NaturalVideoWidth;
+                Height = mediaPlayer.NaturalVideoHeight;
+                mediaPlayer.Width = Width;
+                mediaPlayer.Height = Height;
+            };
+
 
             GameObjects.Add(mediaPlayer);
 
-            ReadMap(levelDirectory + "/map.csv");
+            ReadMap(LevelDirectory + "/map.csv");
 
-            //TODO: Synchronization logic            
+#if DEBUG
+            Button btnPlay = CreateButton("Play", Play);
+            GameObjects.Add(btnPlay);
+            Button btnResume = CreateButton("Resume", Resume);
+            Canvas.SetTop(btnResume, 50);
+            GameObjects.Add(btnResume);
+            Button btnPause = CreateButton("Pause", Pause);
+            Canvas.SetTop(btnPause, 100);
+            GameObjects.Add(btnPause);
+            Button btnStop = CreateButton("Stop", Stop);
+            Canvas.SetTop(btnStop, 150);
+            GameObjects.Add(btnStop);
+#endif
+        }
+
+        #region Interaction cotrol of animations
+        private void Play()
+        {
+            if (mediaPlayer.CurrentState != MediaElementState.Stopped && mediaPlayer.CurrentState != MediaElementState.Closed)
+                return;
+            Animations = new Dictionary<Storyboard, FrameworkElement>();
             mediaPlayer.Play();
 
-            var placeholders = Elements.Select((x) => x.Placeholder).ToList();
+            var placeholders = Elements.Select((x) => { Animations.Add(x.Placeholder.Animation, x.Placeholder.Figure); return x.Placeholder; }).ToList();
             for (int i = 0; i < placeholders.Count; i++)
-                placeholders[i].Figure.BeginStoryboard(placeholders[i].Animation, HandoffBehavior.Compose, true);
+                placeholders[i].Animation.Begin(placeholders[i].Figure, HandoffBehavior.Compose, true);
 
-            var primitives = Elements.Select((x) => x.Primitive).ToList();
+            var primitives = Elements.Select((x) => { Animations.Add(x.Primitive.Animation, x.Primitive.Figure); return x.Primitive; }).ToList();
             for (int i = 0; i < primitives.Count; i++)
-                primitives[i].Animation.Begin(primitives[i].Figure, true);
+                primitives[i].Animation.Begin(primitives[i].Figure, HandoffBehavior.Compose, true);
 
             var holdElements = Elements.Select((x) => x as HoldElement).Where((x) => x is HoldElement).ToList();
             for (int i = 0; i < holdElements.Count; i++)
-                holdElements[i].TextElement.BeginStoryboard(holdElements[i].TimerAnimation, HandoffBehavior.Compose, true);
+            {
+                Animations.Add(holdElements[i].TimerAnimation, holdElements[i].TextElement);
+                holdElements[i].TimerAnimation.Begin(holdElements[i].TextElement, HandoffBehavior.Compose, true);
+            }
         }
+
+        private void Resume()
+        {
+            mediaPlayer.Play();
+            foreach (KeyValuePair<Storyboard, FrameworkElement> pair in Animations)
+                pair.Key.Resume(pair.Value);
+        }
+
+        private void Stop()
+        {
+            mediaPlayer.Stop();
+            foreach (KeyValuePair<Storyboard, FrameworkElement> pair in Animations)
+                pair.Key.Stop(pair.Value);
+            Load();
+        }
+
+        private void Pause()
+        {
+            mediaPlayer.Pause();
+            foreach (KeyValuePair<Storyboard, FrameworkElement> pair in Animations)
+                pair.Key.Pause(pair.Value);
+        }
+        #endregion
 
         private void ReadMap(string path)
         {
@@ -187,7 +263,6 @@ namespace TheStage.ViewModel
                 Canvas.SetLeft(placeholder.Figure, placeholderPosition.X);
                 Canvas.SetTop(placeholder.Figure, placeholderPosition.Y);
 
-                //WIP
                 if (element is HoldElement)
                 {
                     HoldElement el = element as HoldElement;
@@ -222,16 +297,6 @@ namespace TheStage.ViewModel
                     };
                 }
 
-                //status.Animation.Completed += (s, e) => GameObjects.Remove(status.TextElement);
-
-                //    primitive.Animation.Completed += (s, e) =>
-                //    {
-                //        GameObjects.Add(status.TextElement);
-                //        GameObjects.Remove(placeholder.Figure);
-                //        GameObjects.Remove(primitive.Figure);
-                //        Elements.Remove(element);
-                //    };
-
                 GameObjects.Add(placeholder.Figure);
                 GameObjects.Add(primitive.Figure);
                 if (element is HoldElement)
@@ -243,7 +308,7 @@ namespace TheStage.ViewModel
         public void KeyDown(object sender, KeyEventArgs args)
         {
             InputMap map = GetInputMap(args.Key);
-            if (Elements.Count == 0 || map == null|| isHoldOn)
+            if (Elements.Count == 0 || map == null || isHoldOn)
                 return;
 
             bool isRightPad = true;
@@ -282,7 +347,7 @@ namespace TheStage.ViewModel
         }
 
         public void KeyUp(object sender, KeyEventArgs args)
-        {            
+        {
             InputMap map = GetInputMap(args.Key);
             if (Elements.Count == 0 || map == null)
                 return;
@@ -297,12 +362,11 @@ namespace TheStage.ViewModel
                 TimeSpan currentTime = element.TimerAnimation.GetCurrentTime(element.TextElement).Value;
                 TimeSpan duration = element.TimerAnimation.Children[0].Duration.TimeSpan + element.TimerAnimation.Children[0].BeginTime.Value;
                 TimeSpan diff = duration - currentTime;
-                //POST_ANIMATION_MILLISECONDS for HoldElement timer is 100
                 TimeSpan epsilon = TimeSpan.FromMilliseconds(200 + POST_ANIMATION_MILLISECONDS);
 
                 KeyType key = GetDirection(map, args.Key);
                 if (diff < epsilon && Elements[0].Key == key)
-                    SetElementCondition(Elements[0], isRightPad,true);
+                    SetElementCondition(Elements[0], isRightPad, true);
 
                 if (Elements[0].IsPassed)
                 {
@@ -314,7 +378,7 @@ namespace TheStage.ViewModel
 
                     Status status = Elements[0].Status;
 
-                    InvalidateQuality(status, qualityBeat);                    
+                    InvalidateQuality(status, qualityBeat);
                 }
                 if (element.TimerAnimation.GetCurrentState(element.TextElement) == ClockState.Active && IsHoldOn)
                     element.TimerAnimation.SkipToFill(element.TextElement);
