@@ -59,9 +59,8 @@ namespace TheStage.Elements
             TimerAnimation = new Storyboard();
 
             DoubleAnimation opacity = new DoubleAnimation(0, 1, TimeSpan.FromMilliseconds(200));
-            opacity.BeginTime = Placeholder.Animation.BeginTime;
+            opacity.BeginTime = Placeholder.Animation.Children[0].BeginTime;
             Storyboard.SetTargetProperty(opacity, new PropertyPath(TextBlock.OpacityProperty));
-
 
             StringAnimationUsingKeyFrames animation = new StringAnimationUsingKeyFrames();
             animation.KeyFrames = GetFrameCollection(Duration.TotalMilliseconds);

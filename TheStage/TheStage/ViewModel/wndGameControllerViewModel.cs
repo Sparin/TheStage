@@ -121,7 +121,7 @@ namespace TheStage.ViewModel
 
             var placeholders = Elements.Select((x) => x.Placeholder).ToList();
             for (int i = 0; i < placeholders.Count; i++)
-                placeholders[i].Figure.BeginAnimation(Control.OpacityProperty, placeholders[i].Animation);
+                placeholders[i].Figure.BeginStoryboard(placeholders[i].Animation, HandoffBehavior.Compose, true);
 
             var primitives = Elements.Select((x) => x.Primitive).ToList();
             for (int i = 0; i < primitives.Count; i++)
