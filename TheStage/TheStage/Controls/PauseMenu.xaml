@@ -22,24 +22,24 @@
             <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
         </Style>
     </UserControl.Resources>
-    <Grid Height="220" Width="350" >
+    <Grid Height="250" Width="350" >
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="{Binding Width, ElementName=shortStatistics}"/>
             <ColumnDefinition/>
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
-            <RowDefinition Height="170"/>
+            <RowDefinition Height="200"/>
             <RowDefinition Height="50"/>
         </Grid.RowDefinitions>
-        <controls:ShortStatistics x:Name="shortStatistics" Background="#55000000" Width="150" Height="170" Grid.Column="0" Grid.Row="0" Grid.RowSpan="2" VerticalAlignment="Top">
+        <controls:ShortStatistics x:Name="shortStatistics" Background="#55000000" Width="150" Height="200" Grid.Column="0" Grid.Row="0" Grid.RowSpan="2" VerticalAlignment="Top">
             <controls:ShortStatistics.LayoutTransform>
                 <SkewTransform AngleY="-15" AngleX="0"/>
             </controls:ShortStatistics.LayoutTransform>
         </controls:ShortStatistics>
         <StackPanel  Grid.Column="1" Background="#55000000" Height="200">
-            <Button x:Name="btnResume">Продолжить</Button>
-            <Button x:Name="btnRestart">Заново</Button>
+            <Button x:Name="btnResume" x:FieldModifier="private">Продолжить</Button>
+            <Button x:Name="btnRestart" x:FieldModifier="private">Заново</Button>
         </StackPanel>
-        <Button x:Name="btnBackToMenu" Grid.Column="1" VerticalAlignment="Bottom" Margin="5">В главное меню</Button>
+        <Button x:Name="btnBackToMenu" x:FieldModifier="private" Grid.Column="1" VerticalAlignment="Bottom" Margin="5">В главное меню</Button>
     </Grid>
 </UserControl>

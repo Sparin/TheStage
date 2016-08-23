@@ -17,16 +17,21 @@ using TheStage.ViewModel;
 namespace TheStage.Controls
 {
     /// <summary>
-    /// Логика взаимодействия для ShortStatistics.xaml
+    /// Логика взаимодействия для Statistics.xaml
     /// </summary>
-    public partial class ShortStatistics : UserControl
+    public partial class Statistics : UserControl
     {
-        public ShortStatistics()
+        public event Action Restart;
+        public event Action BackToMenu;
+
+        public Statistics()
         {
-            InitializeComponent();         
+            InitializeComponent();
+            btnRestart.Click += (s, e) => Restart();
+            btnBackToMenu.Click += (s, e) => BackToMenu();
         }
 
-        public ShortStatistics(StatisticsViewModel dataContext):this()
+        public Statistics(StatisticsViewModel dataContext):this()
         {
             DataContext = dataContext;
         }

@@ -70,6 +70,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Controls\Statistics.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Resources\Styles\StatusStyles.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -92,6 +96,9 @@
     </Compile>
     <Compile Include="Controls\ShortStatistics.xaml.cs">
       <DependentUpon>ShortStatistics.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\Statistics.xaml.cs">
+      <DependentUpon>Statistics.xaml</DependentUpon>
     </Compile>
     <Compile Include="Elements\Base\Factories\DoubleFactory.cs" />
     <Compile Include="Elements\Base\Factories\ElementFactory.cs" />
@@ -148,7 +155,9 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="Resources\Images\" />
+  </ItemGroup>
   <ItemGroup>
     <None Include="Resources\Missions\[Demo] Children of The Night\video.mp4">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>

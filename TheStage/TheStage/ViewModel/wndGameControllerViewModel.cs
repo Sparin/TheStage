@@ -36,6 +36,7 @@ namespace TheStage.ViewModel
         public ObservableCollection<UIElement> GameObjects { get; private set; }
 
         PauseMenu pauseMenu;
+        Statistics statsControl;
 
         private InputMap leftInputMap;
         public InputMap LeftInputMap { get { return leftInputMap; } set { leftInputMap = value; RaisePropertyChanged(); } }
@@ -144,7 +145,13 @@ namespace TheStage.ViewModel
                 mediaPlayer.Width = Width;
                 mediaPlayer.Height = Height;
             };
-
+            mediaPlayer.MediaEnded += (s, e) =>
+            {
+                statsControl = new Statistics(Stats) { Width = this.Width, Height = this.Height };
+                statsControl.Restart += () => { GameObjects.Remove(statsControl); Stop(); Play(); };
+                statsControl.BackToMenu += () => { throw new NotImplementedException(); };
+                GameObjects.Add(statsControl);
+            };
 
             GameObjects.Add(mediaPlayer);
 
@@ -215,7 +222,7 @@ namespace TheStage.ViewModel
                 pair.Key.Pause(pair.Value);
 
             pauseMenu = new PauseMenu() { DataContext = Stats, Width = width, Height = height };
-            pauseMenu.Resume += ()=>{ GameObjects.Remove(pauseMenu); Resume(); };
+            pauseMenu.Resume += () => { GameObjects.Remove(pauseMenu); Resume(); };
             pauseMenu.Restart += () => { GameObjects.Remove(pauseMenu); Stop(); Play(); };
             pauseMenu.BackToMenu += () => { throw new NotImplementedException(); };
             GameObjects.Add(pauseMenu);
@@ -296,6 +303,8 @@ namespace TheStage.ViewModel
                         GameObjects.Remove(placeholder.Figure);
                         GameObjects.Remove(el.TextElement);
                         Elements.Remove(element);
+                        if (element.Status.TextElement.Style == (Style)element.Status.TextElement.FindResource("StatusMissStyle"))
+                            InvalidateQuality(null, -1);
                     };
                 }
                 else
@@ -308,6 +317,8 @@ namespace TheStage.ViewModel
                         GameObjects.Remove(placeholder.Figure);
                         GameObjects.Remove(primitive.Figure);
                         Elements.Remove(element);
+                        if (element.Status.TextElement.Style == (Style)element.Status.TextElement.FindResource("StatusMissStyle"))
+                            InvalidateQuality(null, -1);
                     };
                 }
 
@@ -322,7 +333,7 @@ namespace TheStage.ViewModel
         public void KeyDown(object sender, KeyEventArgs args)
         {
             InputMap map = GetInputMap(args.Key);
-            if (Elements.Count == 0 || map == null || isHoldOn)
+            if (Elements.Count == 0 || map == null || isHoldOn || GameObjects.Contains(pauseMenu))
                 return;
 
             bool isRightPad = true;
@@ -348,10 +359,9 @@ namespace TheStage.ViewModel
 
                 Status status = Elements[0].Status;
                 if (Elements[0] is HoldElement)
-                {
                     status = ((HoldElement)Elements[0]).FirstStatus;
+                if (Elements[0] is HoldElement || Elements[0] is SingleElement)
                     IsHoldOn = true;
-                }
 
                 InvalidateQuality(status, qualityBeat);
 
@@ -363,7 +373,7 @@ namespace TheStage.ViewModel
         public void KeyUp(object sender, KeyEventArgs args)
         {
             InputMap map = GetInputMap(args.Key);
-            if (Elements.Count == 0 || map == null)
+            if (Elements.Count == 0 || map == null || GameObjects.Contains(pauseMenu))
                 return;
             if (Elements[0] is HoldElement)
             {
@@ -396,8 +406,8 @@ namespace TheStage.ViewModel
                 }
                 if (element.TimerAnimation.GetCurrentState(element.TextElement) == ClockState.Active && IsHoldOn)
                     element.TimerAnimation.SkipToFill(element.TextElement);
-                IsHoldOn = false;
             }
+            IsHoldOn = false;
         }
 
         private void InvalidateQuality(Status status, int qualityBeat)
@@ -434,6 +444,10 @@ namespace TheStage.ViewModel
                 case 7:
                     status.TextElement.Style = (Style)status.TextElement.FindResource("StatusBadStyle");
                     Stats.Bad++;
+                    ComboMultiplyer = 1;
+                    break;
+                default:
+                    Stats.Miss++;
                     ComboMultiplyer = 1;
                     break;
             }
