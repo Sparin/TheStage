@@ -85,7 +85,7 @@ namespace TheStage.ViewModel
                     case 16:
                         return string.Format("Пройден ({0:N1}%)", Success);
                     default:
-                        return string.Format("Неудача ({0:N1)%)", Success);
+                        return string.Format("Неудача ({0:N1}%)", Success);
                 }
             }
         }

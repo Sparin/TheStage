@@ -107,6 +107,21 @@ namespace TheStage.ViewModel
             Play();
         }
 
+        private void InitializeUI()
+        {
+            Image avatarHolder = new Image() { Height = 200, Stretch = Stretch.UniformToFill };
+            avatarHolder.Source = ElementFactory.GetBitmapSource(@"Resources\Images\UI\GameController\avatarHolder.png");
+            Canvas.SetBottom(avatarHolder, 0);
+            Canvas.SetRight(avatarHolder, 0);
+
+            Image jukebox = new Image() { Height = 200, Stretch = Stretch.UniformToFill };
+            jukebox.Source = ElementFactory.GetBitmapSource(@"Resources\Images\UI\GameController\jukebox.png");
+            Canvas.SetBottom(jukebox, 0);
+
+            GameObjects.Add(jukebox);
+            GameObjects.Add(avatarHolder);
+        }
+
         private Button CreateButton(string content, Action clickDelegate)
         {
             Button result = new Button();
@@ -156,6 +171,7 @@ namespace TheStage.ViewModel
             GameObjects.Add(mediaPlayer);
 
             ReadMap(LevelDirectory + "/map.csv");
+            InitializeUI();
 
 #if DEBUG
             Button btnPlay = CreateButton("Play", Play);

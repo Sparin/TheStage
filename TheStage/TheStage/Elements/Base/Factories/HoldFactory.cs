@@ -25,14 +25,14 @@ namespace TheStage.Elements.Base.Factories
             foreach (string file in Directory.GetFiles(path))
             {
                 PrimitiveType type = (PrimitiveType)Enum.Parse(typeof(PrimitiveType), Path.GetFileNameWithoutExtension(file), true);
-                Placeholders.Add(type, GetBitmapSource(type, file));
+                Placeholders.Add(type, GetBitmapSource(file));
             }
 
             path = AppDomain.CurrentDomain.BaseDirectory + @"Resources\Elements\HoldElement\Primitives";
             foreach (string file in Directory.GetFiles(path))
             {
                 PrimitiveType type = (PrimitiveType)Enum.Parse(typeof(PrimitiveType), Path.GetFileNameWithoutExtension(file), true);
-                Primitives.Add(type, GetBitmapSource(type, file));
+                Primitives.Add(type, GetBitmapSource(file));
             }
         }
     }

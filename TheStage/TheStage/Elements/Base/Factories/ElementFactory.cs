@@ -14,7 +14,7 @@ namespace TheStage.Elements.Base.Factories
         public abstract Dictionary<PrimitiveType, BitmapSource> Placeholders { get; protected set; }
         public abstract Dictionary<PrimitiveType, BitmapSource> Primitives { get; protected set; }
 
-        protected static BitmapSource GetBitmapSource(PrimitiveType type, string path)
+        internal static BitmapSource GetBitmapSource(string path)
         {
             using (Stream stream = File.Open(path, FileMode.Open, FileAccess.Read, FileShare.Read))
             {
