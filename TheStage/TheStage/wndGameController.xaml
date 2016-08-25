@@ -7,7 +7,12 @@
         xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
         xmlns:local="clr-namespace:TheStage"
         mc:Ignorable="d"
-        Title="{Binding Score}" Height="300" Width="300">
+        WindowStyle="None"
+        WindowState="Maximized"
+        Background="Black"
+        Topmost="True"
+        ShowInTaskbar="False"
+        ShowActivated="True">
     <Window.InputBindings>
         <KeyBinding Command="{Binding PauseCommand}" Key="Esc"/>
     </Window.InputBindings>
@@ -23,7 +28,7 @@
         <ItemsControl Width="{Binding Width}" Height="{Binding Height}" ItemsSource="{Binding GameObjects}">
             <ItemsControl.ItemsPanel>
                 <ItemsPanelTemplate >
-                    <Canvas Background="Black"/>
+                    <Canvas Background="Black" ClipToBounds="True"/>
                 </ItemsPanelTemplate>
             </ItemsControl.ItemsPanel>
         </ItemsControl>
