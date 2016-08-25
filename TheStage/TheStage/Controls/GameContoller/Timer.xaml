@@ -1,15 +1,22 @@
-﻿<UserControl x:Class="TheStage.Controls.GameContoller.Timer"
+﻿<UserControl x:Class="TheStage.Controls.GameController.Timer"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:local="clr-namespace:TheStage.Controls.GameContoller"
+             xmlns:local="clr-namespace:TheStage.Controls.GameController"
              mc:Ignorable="d"
              Background="#AA000000"
              HorizontalAlignment="Stretch"
              VerticalAlignment="Stretch"
              d:DesignHeight="720" d:DesignWidth="1280"
              x:Name="ucTimer" x:FieldModifier="private">
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="../../Resources/Styles/GameControllerStyles.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </UserControl.Resources>
     <Grid Width="800" Height="600">
         <TextBlock x:Name="txtTimer" x:FieldModifier="private" FontSize="400" Text="5" HorizontalAlignment="Center" VerticalAlignment="Center" TextAlignment="Center" Foreground="AliceBlue">
             <TextBlock.Triggers>

@@ -36,6 +36,7 @@ namespace TheStage.ViewModel
         private MediaElementSL mediaPlayer = new MediaElementSL();
         public ObservableCollection<UIElement> GameObjects { get; private set; }
 
+        Timer preStartTimer;
         PauseMenu pauseMenu;
         Statistics statsControl;
 
@@ -110,15 +111,35 @@ namespace TheStage.ViewModel
 
         private void InitializeUI()
         {
-            Image avatarHolder = new Image() { Height = 200, Stretch = Stretch.UniformToFill };
+            Image avatarHolder = new Image() { Width = 230, Stretch = Stretch.UniformToFill };
             avatarHolder.Source = ElementFactory.GetBitmapSource(@"Resources\Images\UI\GameController\avatarHolder.png");
             Canvas.SetBottom(avatarHolder, 0);
             Canvas.SetRight(avatarHolder, 0);
 
-            Image jukebox = new Image() { Height = 200, Stretch = Stretch.UniformToFill };
+            Image jukebox = new Image() { Width = 273, Stretch = Stretch.UniformToFill };
             jukebox.Source = ElementFactory.GetBitmapSource(@"Resources\Images\UI\GameController\jukebox.png");
             Canvas.SetBottom(jukebox, 0);
 
+            ImageBrush chain = new ImageBrush(ElementFactory.GetBitmapSource(@"Resources\Images\UI\GameController\chain.png")) { TileMode = TileMode.FlipX };
+            chain.Viewport = new Rect(0, 0, 100, 50);
+            chain.ViewportUnits = BrushMappingMode.Absolute;
+            chain.Stretch = Stretch.Uniform;
+            Canvas c = new Canvas() { Width = this.Width - jukebox.Width - avatarHolder.Width, Height = 50, Background = chain };
+            Canvas.SetBottom(c, 0);
+            Canvas.SetLeft(c, jukebox.Width);
+
+            Image marker = new Image();
+            marker.Source = ElementFactory.GetBitmapSource(@"Resources\Images\UI\GameController\marker.png");
+            Canvas.SetBottom(marker, 0);
+            Storyboard markerAnimation = new Storyboard();
+            DoubleAnimation markerLeft = new DoubleAnimation(jukebox.Width, c.Width + jukebox.Width - marker.Source.Width, mediaPlayer.NaturalDuration);
+            Storyboard.SetTargetProperty(markerAnimation, new PropertyPath(Canvas.LeftProperty));
+            markerAnimation.Children.Add(markerLeft);            
+            marker.Loaded += (s, e) => { markerAnimation.Begin(marker, HandoffBehavior.Compose, true);
+                markerAnimation.Pause(marker); Animations.Add(markerAnimation, marker); };
+
+            GameObjects.Add(c);
+            GameObjects.Add(marker);
             GameObjects.Add(jukebox);
             GameObjects.Add(avatarHolder);
         }
@@ -159,9 +180,11 @@ namespace TheStage.ViewModel
                 Width = mediaPlayer.NaturalVideoWidth;
                 Height = mediaPlayer.NaturalVideoHeight;
                 Pause(true);
-                Controls.GameContoller.Timer timer = new Controls.GameContoller.Timer() { Width = width, Height = height };
-                timer.Completed += () => { GameObjects.Remove(timer); Resume(); };
-                GameObjects.Add(timer);
+                preStartTimer = new Timer() { Width = width, Height = height };
+                preStartTimer.Completed += () => { GameObjects.Remove(preStartTimer); Resume(); };
+
+                InitializeUI();
+                GameObjects.Add(preStartTimer);
             };
             mediaPlayer.MediaEnded += (s, e) =>
             {
@@ -174,7 +197,6 @@ namespace TheStage.ViewModel
             GameObjects.Add(mediaPlayer);
 
             ReadMap(LevelDirectory + "/map.csv");
-            InitializeUI();
 
 #if DEBUG
             Button btnPlay = CreateButton("Play", Play);
@@ -234,6 +256,8 @@ namespace TheStage.ViewModel
         private void Pause() { Pause(false); }
         private void Pause(bool isControllable)
         {
+            if (GameObjects.Contains(preStartTimer))
+                return;
             if (GameObjects.Contains(pauseMenu))
             {
                 GameObjects.Remove(pauseMenu); Resume(); return;

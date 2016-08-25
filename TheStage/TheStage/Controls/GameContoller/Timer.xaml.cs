@@ -13,7 +13,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace TheStage.Controls.GameContoller
+namespace TheStage.Controls.GameController
 {
     /// <summary>
     /// Логика взаимодействия для Timer.xaml
