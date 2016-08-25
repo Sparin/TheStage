@@ -23,6 +23,7 @@ using TheStage.Elements;
 using TheStage.Elements.Base;
 using TheStage.Elements.Base.Factories;
 using TheStage.Controls;
+using TheStage.Controls.GameController;
 
 namespace TheStage.ViewModel
 {
@@ -157,8 +158,10 @@ namespace TheStage.ViewModel
             {
                 Width = mediaPlayer.NaturalVideoWidth;
                 Height = mediaPlayer.NaturalVideoHeight;
-                mediaPlayer.Width = Width;
-                mediaPlayer.Height = Height;
+                Pause(true);
+                Controls.GameContoller.Timer timer = new Controls.GameContoller.Timer() { Width = width, Height = height };
+                timer.Completed += () => { GameObjects.Remove(timer); Resume(); };
+                GameObjects.Add(timer);
             };
             mediaPlayer.MediaEnded += (s, e) =>
             {
@@ -228,20 +231,26 @@ namespace TheStage.ViewModel
             Load();
         }
 
-        private void Pause()
+        private void Pause() { Pause(false); }
+        private void Pause(bool isControllable)
         {
             if (GameObjects.Contains(pauseMenu))
-                return;
+            {
+                GameObjects.Remove(pauseMenu); Resume(); return;
+            }
 
             mediaPlayer.Pause();
             foreach (KeyValuePair<Storyboard, FrameworkElement> pair in Animations)
                 pair.Key.Pause(pair.Value);
 
-            pauseMenu = new PauseMenu() { DataContext = Stats, Width = width, Height = height };
-            pauseMenu.Resume += () => { GameObjects.Remove(pauseMenu); Resume(); };
-            pauseMenu.Restart += () => { GameObjects.Remove(pauseMenu); Stop(); Play(); };
-            pauseMenu.BackToMenu += () => { throw new NotImplementedException(); };
-            GameObjects.Add(pauseMenu);
+            if (!isControllable)
+            {
+                pauseMenu = new PauseMenu() { DataContext = Stats, Width = width, Height = height };
+                pauseMenu.Resume += () => { GameObjects.Remove(pauseMenu); Resume(); };
+                pauseMenu.Restart += () => { GameObjects.Remove(pauseMenu); Stop(); Play(); };
+                pauseMenu.BackToMenu += () => { throw new NotImplementedException(); };
+                GameObjects.Add(pauseMenu);
+            }
         }
         #endregion
 

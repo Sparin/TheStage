@@ -14,24 +14,19 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using TheStage.ViewModel;
 
-namespace TheStage.Controls
+namespace TheStage.Controls.GameController
 {
     /// <summary>
-    /// Логика взаимодействия для Statistics.xaml
+    /// Логика взаимодействия для ShortStatistics.xaml
     /// </summary>
-    public partial class Statistics : UserControl
+    public partial class ShortStatistics : UserControl
     {
-        public event Action Restart;
-        public event Action BackToMenu;
-
-        public Statistics()
+        public ShortStatistics()
         {
-            InitializeComponent();
-            btnRestart.Click += (s, e) => Restart();
-            btnBackToMenu.Click += (s, e) => BackToMenu();
+            InitializeComponent();         
         }
 
-        public Statistics(StatisticsViewModel dataContext):this()
+        public ShortStatistics(StatisticsViewModel dataContext):this()
         {
             DataContext = dataContext;
         }

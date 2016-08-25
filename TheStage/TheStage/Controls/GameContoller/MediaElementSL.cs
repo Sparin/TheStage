@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Controls;
 
-namespace TheStage.Controls
+namespace TheStage.Controls.GameController
 {
     //Media element like from Silverlight (SL)
     sealed public class MediaElementSL : MediaElement

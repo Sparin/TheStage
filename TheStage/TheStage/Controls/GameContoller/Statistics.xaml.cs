@@ -9,33 +9,31 @@ using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using TheStage.ViewModel;
 
-namespace TheStage.Controls
+namespace TheStage.Controls.GameController
 {
     /// <summary>
-    /// Логика взаимодействия для PauseMenu.xaml
+    /// Логика взаимодействия для Statistics.xaml
     /// </summary>
-    public partial class PauseMenu : UserControl
+    public partial class Statistics : UserControl
     {
         public event Action Restart;
-        public event Action Resume;
         public event Action BackToMenu;
 
-        public PauseMenu()
+        public Statistics()
         {
             InitializeComponent();
-            this.Loaded += (s, e) =>
-            {
-                DoubleAnimation widthAnim = new DoubleAnimation(0, 150, TimeSpan.FromMilliseconds(500));
-                shortStatistics.BeginAnimation(WidthProperty, widthAnim);
-            };
-            btnResume.Click += (s,e)=> Resume();
             btnRestart.Click += (s, e) => Restart();
             btnBackToMenu.Click += (s, e) => BackToMenu();
+        }
+
+        public Statistics(StatisticsViewModel dataContext):this()
+        {
+            DataContext = dataContext;
         }
     }
 }

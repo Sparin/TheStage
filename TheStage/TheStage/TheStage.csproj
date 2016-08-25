@@ -62,15 +62,19 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Page Include="Controls\PauseMenu.xaml">
+    <Page Include="Controls\GameContoller\PauseMenu.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Controls\ShortStatistics.xaml">
+    <Page Include="Controls\GameContoller\ShortStatistics.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Controls\Statistics.xaml">
+    <Page Include="Controls\GameContoller\Statistics.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\GameContoller\Timer.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -90,15 +94,18 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Controls\MediaElementSL.cs" />
-    <Compile Include="Controls\PauseMenu.xaml.cs">
+    <Compile Include="Controls\GameContoller\MediaElementSL.cs" />
+    <Compile Include="Controls\GameContoller\PauseMenu.xaml.cs">
       <DependentUpon>PauseMenu.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Controls\ShortStatistics.xaml.cs">
+    <Compile Include="Controls\GameContoller\ShortStatistics.xaml.cs">
       <DependentUpon>ShortStatistics.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Controls\Statistics.xaml.cs">
+    <Compile Include="Controls\GameContoller\Statistics.xaml.cs">
       <DependentUpon>Statistics.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\GameContoller\Timer.xaml.cs">
+      <DependentUpon>Timer.xaml</DependentUpon>
     </Compile>
     <Compile Include="Elements\Base\Factories\DoubleFactory.cs" />
     <Compile Include="Elements\Base\Factories\ElementFactory.cs" />

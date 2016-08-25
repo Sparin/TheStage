@@ -12,23 +12,24 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
-using TheStage.ViewModel;
 
-namespace TheStage.Controls
+namespace TheStage.Controls.GameContoller
 {
     /// <summary>
-    /// Логика взаимодействия для ShortStatistics.xaml
+    /// Логика взаимодействия для Timer.xaml
     /// </summary>
-    public partial class ShortStatistics : UserControl
+    public partial class Timer : UserControl
     {
-        public ShortStatistics()
+        public event Action Completed;
+        
+        public Timer()
         {
-            InitializeComponent();         
+            InitializeComponent();
         }
 
-        public ShortStatistics(StatisticsViewModel dataContext):this()
+        private void DoubleAnimation_Completed(object sender, EventArgs e)
         {
-            DataContext = dataContext;
+            Completed();
         }
     }
 }
