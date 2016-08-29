@@ -428,6 +428,9 @@ namespace TheStage.ViewModel
             {
                 HoldElement element = Elements[0] as HoldElement;
 
+                if (!element.IsKeyDownSuccess)
+                    return;
+
                 bool isRightPad = true;
                 if (map == LeftInputMap)
                     isRightPad = false;
