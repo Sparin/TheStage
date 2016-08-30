@@ -5,11 +5,20 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Media;
+using TheStage.Elements.Base.Factories;
 
 namespace TheStage.ViewModel
 {
     public class StatisticsViewModel : INotifyPropertyChanged
     {
+        private ImageSource image;
+        public ImageSource Image
+        {
+            get { return image; }
+            set { image = value; RaisePropertyChanged(); }
+        }
+
         private long score = 0;
         public long Score
         {
@@ -76,15 +85,20 @@ namespace TheStage.ViewModel
                 switch (Convert.ToInt32(Success) / 5)
                 {
                     case 20: //x = 100%
-                        return string.Format("Идеально! ({0:N1}%)",Success);
+                        Image = ElementFactory.GetBitmapSource(@"Resources\Images\UI\GameController\Faces\excellent.png");
+                        return string.Format("Идеально! ({0:N1}%)", Success);
                     case 19: //x > 95%
+                        Image = ElementFactory.GetBitmapSource(@"Resources\Images\UI\GameController\Faces\good.png");
                         return string.Format("Изумительно! ({0:N1}%)", Success);
                     case 18: //x > 90%
+                        Image = ElementFactory.GetBitmapSource(@"Resources\Images\UI\GameController\Faces\safe.png");
                         return string.Format("Хорошо! ({0:N1}%)", Success);
                     case 17: //x > 80%
                     case 16:
+                        Image = ElementFactory.GetBitmapSource(@"Resources\Images\UI\GameController\Faces\awful.png");
                         return string.Format("Пройден ({0:N1}%)", Success);
                     default:
+                        Image = ElementFactory.GetBitmapSource(@"Resources\Images\UI\GameController\Faces\miss.png");
                         return string.Format("Неудача ({0:N1}%)", Success);
                 }
             }

@@ -34,6 +34,7 @@ namespace TheStage.ViewModel
         private Dictionary<Storyboard, FrameworkElement> Animations = new Dictionary<Storyboard, FrameworkElement>();
         private List<Element> Elements = new List<Element>();
         private MediaElementSL mediaPlayer = new MediaElementSL();
+        private Image statusFace;
         public ObservableCollection<UIElement> GameObjects { get; private set; }
 
         Timer preStartTimer;
@@ -116,32 +117,58 @@ namespace TheStage.ViewModel
             Canvas.SetBottom(avatarHolder, 0);
             Canvas.SetRight(avatarHolder, 0);
 
-            Image jukebox = new Image() { Width = 273, Stretch = Stretch.UniformToFill };
+            Image jukebox = new Image() { Width = 273, Stretch = Stretch.UniformToFill }; //273
             jukebox.Source = ElementFactory.GetBitmapSource(@"Resources\Images\UI\GameController\jukebox.png");
             Canvas.SetBottom(jukebox, 0);
 
-            ImageBrush chain = new ImageBrush(ElementFactory.GetBitmapSource(@"Resources\Images\UI\GameController\chain.png")) { TileMode = TileMode.FlipX };
-            chain.Viewport = new Rect(0, 0, 100, 50);
-            chain.ViewportUnits = BrushMappingMode.Absolute;
-            chain.Stretch = Stretch.Uniform;
-            Canvas c = new Canvas() { Width = this.Width - jukebox.Width - avatarHolder.Width, Height = 50, Background = chain };
-            Canvas.SetBottom(c, 0);
-            Canvas.SetLeft(c, jukebox.Width);
+            ImageBrush fillHolderSource = new ImageBrush(ElementFactory.GetBitmapSource(@"Resources\Images\UI\GameController\container.png"))
+            { TileMode = TileMode.FlipX, Viewport = new Rect(0, 0, 100, 40), ViewportUnits = BrushMappingMode.Absolute, Stretch = Stretch.Fill };
+            Canvas fillHolder = new Canvas() { Width = this.Width - jukebox.Width - avatarHolder.Width, Height = 40, Background = fillHolderSource };
+            Canvas.SetBottom(fillHolder, 5);
+            Canvas.SetLeft(fillHolder, jukebox.Width);
 
-            Image marker = new Image();
+            ImageBrush fillerSource = new ImageBrush(ElementFactory.GetBitmapSource(@"Resources\Images\UI\GameController\filler.png"))
+            { TileMode = TileMode.FlipX, Viewport = new Rect(0, 0, 100, 40), ViewportUnits = BrushMappingMode.Absolute, Stretch = Stretch.Fill };
+            Canvas filler = new Canvas() { Width = this.Width - jukebox.Width - avatarHolder.Width, Height = 40, Background = fillerSource };
+            Canvas.SetBottom(filler, 5);
+            Canvas.SetLeft(filler, jukebox.Width);
+
+            Image marker = new Image() { Height = 40 };
             marker.Source = ElementFactory.GetBitmapSource(@"Resources\Images\UI\GameController\marker.png");
-            Canvas.SetBottom(marker, 0);
-            Storyboard markerAnimation = new Storyboard();
-            DoubleAnimation markerLeft = new DoubleAnimation(jukebox.Width, c.Width + jukebox.Width - marker.Source.Width, mediaPlayer.NaturalDuration);
-            Storyboard.SetTargetProperty(markerAnimation, new PropertyPath(Canvas.LeftProperty));
-            markerAnimation.Children.Add(markerLeft);            
-            marker.Loaded += (s, e) => { markerAnimation.Begin(marker, HandoffBehavior.Compose, true);
-                markerAnimation.Pause(marker); Animations.Add(markerAnimation, marker); };
+            Canvas.SetBottom(marker, 5);
 
-            GameObjects.Add(c);
+            Grid faceContainer = new Grid() { Height = 181.25, Width = 181.25 };
+            statusFace = new Image() { VerticalAlignment = VerticalAlignment.Center, HorizontalAlignment = HorizontalAlignment.Center, Source = ElementFactory.GetBitmapSource(@"Resources\Images\UI\GameController\Faces\safe.png") };
+            faceContainer.Children.Add(statusFace);
+            Canvas.SetBottom(faceContainer, 0);
+            Canvas.SetRight(faceContainer, 0);
+
+            #region Animations 
+            Storyboard markerAnimation = new Storyboard();
+            DoubleAnimation markerLeft = new DoubleAnimation(jukebox.Width, fillHolder.Width + jukebox.Width - marker.Source.Width, mediaPlayer.NaturalDuration);
+            Storyboard.SetTargetProperty(markerAnimation, new PropertyPath(Canvas.LeftProperty));
+
+            Storyboard fillerAnimation = new Storyboard();
+            DoubleAnimation fillerWidth = new DoubleAnimation(0, Width - jukebox.Width - avatarHolder.Width, mediaPlayer.NaturalDuration);
+            Storyboard.SetTargetProperty(fillerAnimation, new PropertyPath(Canvas.WidthProperty));
+
+            fillerAnimation.Children.Add(fillerWidth);
+            markerAnimation.Children.Add(markerLeft);
+            marker.Loaded += (s, e) =>
+            {
+                fillerAnimation.Begin(filler, HandoffBehavior.Compose, true);
+                fillerAnimation.Pause(filler); Animations.Add(fillerAnimation, filler);
+                markerAnimation.Begin(marker, HandoffBehavior.Compose, true);
+                markerAnimation.Pause(marker); Animations.Add(markerAnimation, marker);
+            };
+            #endregion
+
+            GameObjects.Add(fillHolder);
+            GameObjects.Add(filler);
             GameObjects.Add(marker);
             GameObjects.Add(jukebox);
             GameObjects.Add(avatarHolder);
+            GameObjects.Add(faceContainer);
         }
 
         private Button CreateButton(string content, Action clickDelegate)
@@ -469,18 +496,21 @@ namespace TheStage.ViewModel
                 case 0://x < 50ms
                 case 1:
                     status.TextElement.Style = (Style)status.TextElement.FindResource("StatusExcellentStyle");
+                    statusFace.Source = ElementFactory.GetBitmapSource(@"Resources\Images\UI\GameController\Faces\excellent.png");
                     Stats.Score += (100 * ComboMultiplyer);
                     Stats.Excellent++;
                     ComboMultiplyer++;
                     break;
                 case 2://x < 75ms 
                     status.TextElement.Style = (Style)status.TextElement.FindResource("StatusGoodStyle");
+                    statusFace.Source =ElementFactory.GetBitmapSource(@"Resources\Images\UI\GameController\Faces\good.png");
                     Stats.Score += (75 * ComboMultiplyer);
                     Stats.Good++;
                     ComboMultiplyer++;
                     break;
                 case 3://x < 100ms
                     status.TextElement.Style = (Style)status.TextElement.FindResource("StatusSafeStyle");
+                    statusFace.Source =ElementFactory.GetBitmapSource(@"Resources\Images\UI\GameController\Faces\safe.png");
                     Stats.Score += 50;
                     Stats.Safe++;
                     ComboMultiplyer = 1;
@@ -488,6 +518,7 @@ namespace TheStage.ViewModel
                 case 4://x < 150ms
                 case 5:
                     status.TextElement.Style = (Style)status.TextElement.FindResource("StatusAwfulStyle");
+                    statusFace.Source =ElementFactory.GetBitmapSource(@"Resources\Images\UI\GameController\Faces\awful.png");
                     Stats.Score += 10;
                     Stats.Awful++;
                     ComboMultiplyer = 1;
@@ -495,10 +526,12 @@ namespace TheStage.ViewModel
                 case 6://x < 200ms
                 case 7:
                     status.TextElement.Style = (Style)status.TextElement.FindResource("StatusBadStyle");
+                    statusFace.Source =ElementFactory.GetBitmapSource(@"Resources\Images\UI\GameController\Faces\bad.png");
                     Stats.Bad++;
                     ComboMultiplyer = 1;
                     break;
                 default:
+                    statusFace.Source =ElementFactory.GetBitmapSource(@"Resources\Images\UI\GameController\Faces\miss.png");
                     Stats.Miss++;
                     ComboMultiplyer = 1;
                     break;
