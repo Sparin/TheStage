@@ -98,7 +98,7 @@ namespace TheStage.ViewModel
         #endregion
 
         public wndGameControllerViewModel(string levelDirectory)
-        {
+        {          
             LevelDirectory = levelDirectory;
 
             //TODO: Sync input map with setting via menu
@@ -217,7 +217,7 @@ namespace TheStage.ViewModel
             mediaPlayer.Stretch = Stretch.UniformToFill;
             mediaPlayer.MediaOpened += (s, e) =>
             {
-
+                
                 Width = mediaPlayer.NaturalVideoWidth;
                 Height = mediaPlayer.NaturalVideoHeight;
                 Pause(true);
@@ -240,7 +240,7 @@ namespace TheStage.ViewModel
             {
                 statsControl = new Statistics(Stats) { Width = this.Width, Height = this.Height };
                 statsControl.Restart += () => { GameObjects.Remove(statsControl); Stop(); Play(); };
-                statsControl.BackToMenu += () => Application.Current.Shutdown();
+                statsControl.BackToMenu += () => { throw new NotImplementedException(); };
                 GameObjects.Add(statsControl);
             };
 
@@ -322,7 +322,7 @@ namespace TheStage.ViewModel
                 pauseMenu = new PauseMenu() { DataContext = Stats, Width = width, Height = height };
                 pauseMenu.Resume += () => { GameObjects.Remove(pauseMenu); Resume(); };
                 pauseMenu.Restart += () => { GameObjects.Remove(pauseMenu); Stop(); Play(); };
-                pauseMenu.BackToMenu += () => Application.Current.Shutdown();
+                pauseMenu.BackToMenu += () => { throw new NotImplementedException(); };
                 GameObjects.Add(pauseMenu);
             }
         }
@@ -526,14 +526,14 @@ namespace TheStage.ViewModel
                     break;
                 case 2://x < 75ms 
                     status.TextElement.Style = (Style)status.TextElement.FindResource("StatusGoodStyle");
-                    statusFace.Source = ElementFactory.GetBitmapSource(@"Resources\Images\UI\GameController\Faces\good.png");
+                    statusFace.Source =ElementFactory.GetBitmapSource(@"Resources\Images\UI\GameController\Faces\good.png");
                     Stats.Score += (75 * ComboMultiplyer);
                     Stats.Good++;
                     ComboMultiplyer++;
                     break;
                 case 3://x < 100ms
                     status.TextElement.Style = (Style)status.TextElement.FindResource("StatusSafeStyle");
-                    statusFace.Source = ElementFactory.GetBitmapSource(@"Resources\Images\UI\GameController\Faces\safe.png");
+                    statusFace.Source =ElementFactory.GetBitmapSource(@"Resources\Images\UI\GameController\Faces\safe.png");
                     Stats.Score += 50;
                     Stats.Safe++;
                     ComboMultiplyer = 1;
@@ -541,7 +541,7 @@ namespace TheStage.ViewModel
                 case 4://x < 150ms
                 case 5:
                     status.TextElement.Style = (Style)status.TextElement.FindResource("StatusAwfulStyle");
-                    statusFace.Source = ElementFactory.GetBitmapSource(@"Resources\Images\UI\GameController\Faces\awful.png");
+                    statusFace.Source =ElementFactory.GetBitmapSource(@"Resources\Images\UI\GameController\Faces\awful.png");
                     Stats.Score += 10;
                     Stats.Awful++;
                     ComboMultiplyer = 1;
@@ -549,12 +549,12 @@ namespace TheStage.ViewModel
                 case 6://x < 200ms
                 case 7:
                     status.TextElement.Style = (Style)status.TextElement.FindResource("StatusBadStyle");
-                    statusFace.Source = ElementFactory.GetBitmapSource(@"Resources\Images\UI\GameController\Faces\bad.png");
+                    statusFace.Source =ElementFactory.GetBitmapSource(@"Resources\Images\UI\GameController\Faces\bad.png");
                     Stats.Bad++;
                     ComboMultiplyer = 1;
                     break;
                 default:
-                    statusFace.Source = ElementFactory.GetBitmapSource(@"Resources\Images\UI\GameController\Faces\miss.png");
+                    statusFace.Source =ElementFactory.GetBitmapSource(@"Resources\Images\UI\GameController\Faces\miss.png");
                     Stats.Miss++;
                     ComboMultiplyer = 1;
                     break;
