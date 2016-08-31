@@ -36,6 +36,6 @@
             <Button x:Name="btnResume" x:FieldModifier="private">Продолжить</Button>
             <Button x:Name="btnRestart" x:FieldModifier="private">Заново</Button>
         </StackPanel>
-        <Button x:Name="btnBackToMenu" x:FieldModifier="private" Grid.Column="1" VerticalAlignment="Bottom" Margin="5">В главное меню</Button>
+        <Button x:Name="btnBackToMenu" x:FieldModifier="private" Grid.Column="1" VerticalAlignment="Bottom" Margin="5">Выход</Button>
     </Grid>
 </UserControl>

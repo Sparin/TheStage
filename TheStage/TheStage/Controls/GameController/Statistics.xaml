@@ -36,7 +36,7 @@
                     <ColumnDefinition/>
                 </Grid.ColumnDefinitions>
                 <Button Margin="5" x:Name="btnRestart" x:FieldModifier="private">Заново</Button>
-                <Button Margin="5" x:Name="btnBackToMenu" x:FieldModifier="private" Grid.Column="1">В меню</Button>
+                <Button Margin="5" x:Name="btnBackToMenu" x:FieldModifier="private" Grid.Column="1">Выход</Button>
             </Grid>
         </Grid>
     </Viewbox>
