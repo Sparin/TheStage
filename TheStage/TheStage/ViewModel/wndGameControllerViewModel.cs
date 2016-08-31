@@ -25,6 +25,7 @@ using TheStage.Elements.Base.Factories;
 using TheStage.Controls;
 using TheStage.Controls.GameController;
 using System.Threading;
+using System.Windows.Data;
 
 namespace TheStage.ViewModel
 {
@@ -52,6 +53,12 @@ namespace TheStage.ViewModel
         public Command PauseCommand { get { return new Command(Pause); } }
 
         #region Properties
+        public long Score
+        {
+            get { return Stats.Score; }
+            set { Stats.Score = value; RaisePropertyChanged(); }
+        }
+
         private bool isHoldOn = false;
         public bool IsHoldOn
         {
@@ -139,6 +146,9 @@ namespace TheStage.ViewModel
             marker.Source = ElementFactory.GetBitmapSource(@"Resources\Images\UI\GameController\marker.png");
             Canvas.SetBottom(marker, 5);
 
+            Controls.GameController.Score score = new Controls.GameController.Score() { DataContext = Stats };
+            Canvas.SetRight(score, 0);
+
             Grid faceContainer = new Grid() { Height = 181.25, Width = 181.25 };
             statusFace = new Image() { VerticalAlignment = VerticalAlignment.Center, HorizontalAlignment = HorizontalAlignment.Center, Source = ElementFactory.GetBitmapSource(@"Resources\Images\UI\GameController\Faces\safe.png") };
             faceContainer.Children.Add(statusFace);
@@ -171,6 +181,7 @@ namespace TheStage.ViewModel
             GameObjects.Add(jukebox);
             GameObjects.Add(avatarHolder);
             GameObjects.Add(faceContainer);
+            GameObjects.Add(score);
         }
 
         private Button CreateButton(string content, Action clickDelegate)

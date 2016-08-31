@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media;
 using System.Windows.Media.Animation;
 using System.Windows.Shapes;
 using TheStage.Elements.Base;
@@ -42,6 +43,7 @@ namespace TheStage.Elements
                 Height = 30,
                 FontSize = 26,
                 TextAlignment = System.Windows.TextAlignment.Center,
+                Style=null,
                 Opacity = 0
             };
 

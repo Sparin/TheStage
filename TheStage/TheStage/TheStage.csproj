@@ -62,19 +62,23 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Page Include="Controls\GameContoller\PauseMenu.xaml">
+    <Page Include="Controls\GameController\PauseMenu.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Controls\GameContoller\ShortStatistics.xaml">
+    <Page Include="Controls\GameController\Score.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Controls\GameContoller\Statistics.xaml">
+    <Page Include="Controls\GameController\ShortStatistics.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Controls\GameContoller\Timer.xaml">
+    <Page Include="Controls\GameController\Statistics.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\GameController\Timer.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -98,17 +102,20 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Controls\GameContoller\MediaElementSL.cs" />
-    <Compile Include="Controls\GameContoller\PauseMenu.xaml.cs">
+    <Compile Include="Controls\GameController\MediaElementSL.cs" />
+    <Compile Include="Controls\GameController\PauseMenu.xaml.cs">
       <DependentUpon>PauseMenu.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Controls\GameContoller\ShortStatistics.xaml.cs">
+    <Compile Include="Controls\GameController\Score.xaml.cs">
+      <DependentUpon>Score.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\GameController\ShortStatistics.xaml.cs">
       <DependentUpon>ShortStatistics.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Controls\GameContoller\Statistics.xaml.cs">
+    <Compile Include="Controls\GameController\Statistics.xaml.cs">
       <DependentUpon>Statistics.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Controls\GameContoller\Timer.xaml.cs">
+    <Compile Include="Controls\GameController\Timer.xaml.cs">
       <DependentUpon>Timer.xaml</DependentUpon>
     </Compile>
     <Compile Include="Elements\Base\Factories\DoubleFactory.cs" />
@@ -149,6 +156,9 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
+    <None Include="Resources\Images\UI\GameController\scoreHolder.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="Resources\Images\UI\GameController\filler.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
