@@ -125,3 +125,15 @@ SingleElement;Square;M727,-100 L727,360;84160;1500;;;85,66;;0,06
 SingleElement;Circle;M802,820 L802,295;84260;1500;;;85,76;;0,1
 SingleElement;Square;M877,-100 L877,360;84360;1500;;;85,86;;0,1
 SingleElement;Circle;M952,820 L952,295;84460;1500;;;85,96;;0,1
+SingleElement;Square;M240,-100 L240,360;92600;2000;;;94,6;;
+SingleElement;Cross;M465,820 L465,295;93600;2000;;;95,6;;
+SingleElement;Circle;M740,-100 L740,360;94600;2000;;;96,6;;
+SingleElement;Triangle;M965,820 L965,295;95600;2000;;;97,6;;
+SingleElement;Square;M240,-100 L240,360;96600;2000;;;98,6;;
+SingleElement;Square;M465,820 L465,295;97100;2000;;;99,1;;
+SingleElement;Square;M540,820 L540,295;97300;2000;;;99,3;;
+SingleElement;Square;M615,820 L615,295;97500;2000;;;99,5;;
+SingleElement;Circle;M740,-100 L740,360;97750;2000;;;99,75;;
+SingleElement;Circle;M790,-100 L790,360;97850;2000;;;99,85;;
+SingleElement;Circle;M840,-100 L840,360;97950;2000;;;99,95;;
+DoubleElement;Circle;M890,-100 L890,360;98050;2000;;;100,05;;

@@ -24,6 +24,7 @@ using TheStage.Elements.Base;
 using TheStage.Elements.Base.Factories;
 using TheStage.Controls;
 using TheStage.Controls.GameController;
+using System.Threading;
 
 namespace TheStage.ViewModel
 {
@@ -36,8 +37,9 @@ namespace TheStage.ViewModel
         private MediaElementSL mediaPlayer = new MediaElementSL();
         private Image statusFace;
         public ObservableCollection<UIElement> GameObjects { get; private set; }
+        bool whrechStart = true;
 
-        Timer preStartTimer;
+        Controls.GameController.Timer preStartTimer;
         PauseMenu pauseMenu;
         Statistics statsControl;
 
@@ -89,7 +91,7 @@ namespace TheStage.ViewModel
         #endregion
 
         public wndGameControllerViewModel(string levelDirectory)
-        {
+        {          
             LevelDirectory = levelDirectory;
 
             //TODO: Sync input map with setting via menu
@@ -204,14 +206,24 @@ namespace TheStage.ViewModel
             mediaPlayer.Stretch = Stretch.UniformToFill;
             mediaPlayer.MediaOpened += (s, e) =>
             {
+                
                 Width = mediaPlayer.NaturalVideoWidth;
                 Height = mediaPlayer.NaturalVideoHeight;
                 Pause(true);
-                preStartTimer = new Timer() { Width = width, Height = height };
+                preStartTimer = new Controls.GameController.Timer() { Width = width, Height = height };
                 preStartTimer.Completed += () => { GameObjects.Remove(preStartTimer); Resume(); };
 
                 InitializeUI();
                 GameObjects.Add(preStartTimer);
+
+                //Просто не спрашивай. Просто работает и не трогай
+                //Короче, есть проблема с синхронизацией с первого запуска и на паузах.
+                //Решается рестартом, либо пересобачиванием всей архитектуры, потому что анимация не привязана к единому Storyboard,
+                //чтобы использовать seek()
+                if (whrechStart)
+                {
+                    Stop(); Play(); Thread.Sleep(1000); whrechStart = false; return;
+                }
             };
             mediaPlayer.MediaEnded += (s, e) =>
             {

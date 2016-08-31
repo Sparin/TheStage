@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace TheStage.ViewModel
@@ -19,7 +20,10 @@ namespace TheStage.ViewModel
 
         public wndMenuViewModel()
         {
-            new wndGameController() { DataContext = new wndGameControllerViewModel(AppDomain.CurrentDomain.BaseDirectory + @"Resources\Missions\[Demo] The Blob Symphony") }.ShowDialog();
+            wndGameController controller = new wndGameController();
+            controller.ContentRendered += (s, e) => { controller.DataContext = new wndGameControllerViewModel(AppDomain.CurrentDomain.BaseDirectory + @"Resources\Missions\[Demo] The Blob Symphony");};
+            controller.ShowDialog();
+            //new wndGameController() { DataContext = new wndGameControllerViewModel(AppDomain.CurrentDomain.BaseDirectory + @"Resources\Missions\[Demo] The Blob Symphony") }.ShowDialog();
         }
 
         private void RaisePropertyChanged([CallerMemberName]string propertyName = "")
