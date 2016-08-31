@@ -1,0 +1,139 @@
+SingleElement;Square;M240,-100 L240,360;100;2050;;;2,15;;
+SingleElement;Circle;M290,-100 L290,360;300;2050;;;2,35;;
+SingleElement;Square;M465,820 L465,295;500;2050;;;2,55;;
+SingleElement;Circle;M515,820 L515,295;700;2050;;;2,75;;
+SingleElement;Square;M690,-100 L690,360;900;2050;;;2,95;;
+SingleElement;Circle;M740,-100 L740,360;1100;2050;;;3,15;;
+SingleElement;Square;M915,820 L915,295;1300;2050;;;3,35;;
+SingleElement;Circle;M965,820 L965,295;1500;2050;;;3,55;;
+DoubleElement;Triangle;M-100,360 C-100,360 340,360 340,150;2600;1550;;;4,15;;
+DoubleElement;Triangle;M1380,360 C1380,360 790,360 790,150;3100;1550;;;4,65;;
+HoldElement;Cross;M607,-100 L607,500;3100;2050;1000;;5,15;6,15;
+DoubleElement;Triangle;M607,-100 L607,375;5100;1550;;;6,65;;
+HoldElement;Cross;M607,-100 L607,200;5100;2050;1000;;7,15;8,15;
+SingleElement;Square;M507,-100 L507,300;10400;1000;;;11,4;;
+SingleElement;Cross;M607,-100 L607,300;10400;1200;;;11,6;;
+SingleElement;Circle;M707,-100 L707,300;10400;1400;;;11,8;;
+DoubleElement;Cross;M607,-100 L607,400;9000;3050;;;12,05;;
+HoldElement;Square;M507,-100 L507,400;10600;2000;500;;12,6;13,1;
+HoldElement;Circle;M707,-100 L707,400;11600;2000;1750;;13,6;15,35;
+DoubleElement;Square;M240,-100 C607,-100 240,-100 240,360;14100;2000;;;16,1;;
+DoubleElement;Circle;M965,820 C607,820 965,820 965,295;14600;2000;;;16,6;;
+HoldElement;Cross;M607,820 L607,400;15600;2000;1750;;17,6;19,35;
+DoubleElement;Triangle;M607,-100 L607,350;17700;2000;;;19,7;;
+HoldElement;Triangle;M607,-100 L607,225;18100;2000;1000;;20,1;21,1;
+HoldElement;Triangle;M608,-100 C608,-100 1205,350 550,400;19600;2000;2000;;21,6;23,6;
+SingleElement;Square;M240,-100 L240,360;22100;2000;;;24,1;;
+SingleElement;Cross;M465,820 L465,295;22600;2000;;;24,6;;
+SingleElement;Circle;M740,-100 L740,360;23100;2000;;;25,1;;
+SingleElement;Triangle;M965,820 L965,295;23600;2000;1750;;25,6;HoldElement needed;
+SingleElement;Square;M465,820 L465,295;26100;2000;;;28,1;;
+SingleElement;Square;M550,820 L550,295;26600;2000;;;28,6;;
+SingleElement;Cross;M690,-100 L690,360;26900;2000;;;28,9;;
+SingleElement;Circle;M740,-100 L740,360;27100;2000;;;29,1;;
+SingleElement;Square;M465,820 L465,155;27600;2000;1000;;29,6;HoldElement needed;
+SingleElement;Square;M550,820 L550,155;28600;2000;;;30,6;;
+SingleElement;Cross;M690,-100 L690,240;28900;2000;;;30,9;;
+SingleElement;Circle;M740,-100 L740,240;29100;2000;;;31,1;;
+SingleElement;Square;M465,820 L465,450;29600;2000;;;31,6;;
+SingleElement;Square;M550,820 L550,450;30100;2000;;;32,1;;
+SingleElement;Cross;M690,-100 L690,500;30700;2000;;;32,7;;
+SingleElement;Circle;M740,-100 L740,500;31100;2000;;;33,1;;
+SingleElement;Square;M465,820 L465,295;32100;2000;;;34,1;;
+SingleElement;Square;M550,820 L550,295;32600;2000;;;34,6;;
+SingleElement;Cross;M690,-100 L690,360;32900;2000;;;34,9;;
+SingleElement;Circle;M740,-100 L740,360;33100;2000;;;35,1;;
+DoubleElement;Circle;M825,-100 L825,360;34200;2000;;;36,2;;
+DoubleElement;Cross;M550,820 L550,360;35200;1500;;;36,7;;
+DoubleElement;Triangle;M550,-100 L550,285;35200;2000;;;37,2;;
+DoubleElement;Triangle;M550,-100 L550,285;36200;2000;;;38,2;;
+DoubleElement;Cross;M550,820 L550,360;36700;2000;;;38,7;;
+DoubleElement;Circle;M825,-100 L825,360;37200;2000;;;39,2;;
+DoubleElement;Square;M275,820 L275,285;37700;2000;;;39,7;;
+SingleElement;Square;M-100,-100 C-100,-100 200,-100 300,307;46650;2000;;;48,65;;
+SingleElement;Square;M0,-100 C0,-100 300,-100 400,307;46775;2000;;;48,775;;
+SingleElement;Square;M100,-100 C100,-100 400,-100 500,307;46900;2000;;;48,9;;
+SingleElement;Square;M200,-100 C200,-100 500,-100 600,307;47025;2000;;;49,025;;
+SingleElement;Square;M300,-100 C300,-100 600,-100 700,307;47150;2000;;;49,15;;
+SingleElement;Cross;M425,-100 C425,-100 725,-100 825,307;47300;2000;;;49,3;;
+SingleElement;Circle;M575,-100 C575,-100 875,-100 975,307;47650;2000;;;49,65;;
+DoubleElement;Triangle;M500,820 L500,407;48100;2000;;;50,1;;
+HoldElement;Triangle;M600,820 L600,407;48600;2000;500;;50,6;51,1;
+HoldElement;Triangle;M700,820 L700,407;49600;2000;500;;51,6;52,1;
+HoldElement;Triangle;M800,820 L800,407;50600;2000;500;;52,6;53,1;
+DoubleElement;Cross;M500,820 L500,407;52100;2000;;;54,1;;
+HoldElement;Cross;M600,820 L600,407;52600;2000;500;;54,6;55,1;
+HoldElement;Cross;M700,820 L700,407;53600;2000;500;;55,6;56,1;
+HoldElement;Cross;M800,820 L800,407;54600;2000;500;;56,6;57,1;
+SingleElement;Square;M-100,-100 C-100,-100 200,-100 300,307;58600;2000;;;60,6;;
+SingleElement;Square;M0,-100 C0,-100 300,-100 400,307;58850;2000;;;60,85;;
+SingleElement;Square;M100,-100 C100,-100 400,-100 500,307;59100;2000;;;61,1;;
+SingleElement;Square;M200,-100 C200,-100 500,-100 600,307;59225;2000;;;61,225;;
+SingleElement;Square;M300,-100 C300,-100 600,-100 700,307;59350;2000;;;61,35;;
+DoubleElement;Cross;M425,-100 C425,-100 725,-100 825,307;59800;2000;;;61,8;;
+HoldElement;Cross;M575,-100 C575,-100 875,-100 975,307;60100;2000;1000;;62,1;;
+HoldElement;Circle;M575,-100 C575,-100 875,-100 975,507;62600;2000;500;;64,6;;
+DoubleElement;Circle;M425,-100 C425,-100 725,-100 825,507;63550;2000;;;65,55;;
+HoldElement;Circle;M275,-100 C275,-100 575,-100 675,507;64100;2000;1000;;66,1;;
+SingleElement;Square;M252,-100 L252,360;67100;2000;;;69,1;;start
+SingleElement;Circle;M302,820 L302,295;67160;2000;;;69,16;;0,06
+SingleElement;Square;M352,-100 L352,360;67220;2000;;;69,22;;0,06
+SingleElement;Circle;M402,820 L402,295;67280;2000;;;69,28;;0,06
+SingleElement;Square;M452,-100 L452,360;67340;2000;;;69,34;;0,06
+SingleElement;Circle;M527,820 L527,295;67440;2000;;;69,44;;0,1
+SingleElement;Square;M602,-100 L602,360;67540;2000;;;69,54;;0,1
+SingleElement;Circle;M677,820 L677,295;67600;2000;;;69,6;;0,06
+SingleElement;Square;M727,-100 L727,360;67660;2000;;;69,66;;0,06
+SingleElement;Circle;M802,820 L802,295;67760;2000;;;69,76;;0,1
+SingleElement;Square;M877,-100 L877,360;67860;2000;;;69,86;;0,1
+SingleElement;Circle;M952,820 L952,295;67960;2000;;;69,96;;0,1
+SingleElement;Square;M252,-100 L252,360;75100;2000;;;77,1;;start
+SingleElement;Circle;M302,820 L302,295;75160;2000;;;77,16;;0,06
+SingleElement;Square;M352,-100 L352,360;75220;2000;;;77,22;;0,06
+SingleElement;Circle;M402,820 L402,295;75280;2000;;;77,28;;0,06
+SingleElement;Square;M452,-100 L452,360;75340;2000;;;77,34;;0,06
+SingleElement;Circle;M527,820 L527,295;75440;2000;;;77,44;;0,1
+SingleElement;Square;M602,-100 L602,360;75540;2000;;;77,54;;0,1
+SingleElement;Circle;M677,820 L677,295;75600;2000;;;77,6;;0,06
+SingleElement;Square;M727,-100 L727,360;75660;2000;;;77,66;;0,06
+SingleElement;Circle;M802,820 L802,295;75760;2000;;;77,76;;0,1
+SingleElement;Square;M877,-100 L877,360;75860;2000;;;77,86;;0,1
+SingleElement;Circle;M952,820 L952,295;75960;2000;;;77,96;;0,1
+SingleElement;Circle;M502,-100 L502,360;77600;2000;;;79,6;;start
+SingleElement;Square;M552,820 L552,295;77700;2000;;;79,7;;0,1
+SingleElement;Circle;M602,-100 L602,360;77800;2000;;;79,8;;0,1
+SingleElement;Square;M652,820 L652,295;77900;2000;;;79,9;;0,1
+SingleElement;Circle;M702,-100 L702,360;78000;2000;;;80;;0,1
+DoubleElement;Cross;M527,-100 L527,227;78600;2000;;;80,6;;
+HoldElement;Cross;M602,820 L602,342;79100;2000;500;;81,1;82,6;
+HoldElement;Triangle;M677,-100 L677,227;80100;2000;1000;;82,1;83,1;
+SingleElement;Circle;M502,-100 L502,360;81600;2000;;;83,6;;
+SingleElement;Square;M552,820 L552,295;81700;2000;;;83,7;;
+SingleElement;Circle;M602,-100 L602,360;81800;2000;;;83,8;;
+SingleElement;Square;M652,820 L652,295;81900;2000;;;83,9;;
+SingleElement;Circle;M702,-100 L702,360;82000;2000;;;84;;
+SingleElement;Square;M752,820 L752,295;82100;2000;;;84,1;;
+SingleElement;Square;M252,-100 L252,360;83600;1500;;;85,1;;start
+SingleElement;Circle;M302,820 L302,295;83660;1500;;;85,16;;0,06
+SingleElement;Square;M352,-100 L352,360;83720;1500;;;85,22;;0,06
+SingleElement;Circle;M402,820 L402,295;83780;1500;;;85,28;;0,06
+SingleElement;Square;M452,-100 L452,360;83840;1500;;;85,34;;0,06
+SingleElement;Circle;M527,820 L527,295;83940;1500;;;85,44;;0,1
+SingleElement;Square;M602,-100 L602,360;84040;1500;;;85,54;;0,1
+SingleElement;Circle;M677,820 L677,295;84100;1500;;;85,6;;0,06
+SingleElement;Square;M727,-100 L727,360;84160;1500;;;85,66;;0,06
+SingleElement;Circle;M802,820 L802,295;84260;1500;;;85,76;;0,1
+SingleElement;Square;M877,-100 L877,360;84360;1500;;;85,86;;0,1
+SingleElement;Circle;M952,820 L952,295;84460;1500;;;85,96;;0,1
+SingleElement;Square;M240,-100 L240,360;92600;2000;;;94,6;;
+SingleElement;Cross;M465,820 L465,295;93600;2000;;;95,6;;
+SingleElement;Circle;M740,-100 L740,360;94600;2000;;;96,6;;
+SingleElement;Triangle;M965,820 L965,295;95600;2000;;;97,6;;
+SingleElement;Square;M240,-100 L240,360;96600;2000;;;98,6;;
+SingleElement;Square;M465,820 L465,295;97100;2000;;;99,1;;
+SingleElement;Square;M540,820 L540,295;97300;2000;;;99,3;;
+SingleElement;Square;M615,820 L615,295;97500;2000;;;99,5;;
+SingleElement;Circle;M740,-100 L740,360;97750;2000;;;99,75;;
+SingleElement;Circle;M790,-100 L790,360;97850;2000;;;99,85;;
+SingleElement;Circle;M840,-100 L840,360;97950;2000;;;99,95;;
+DoubleElement;Circle;M890,-100 L890,360;98050;2000;;;100,05;;

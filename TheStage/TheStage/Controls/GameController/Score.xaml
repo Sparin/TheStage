@@ -1,0 +1,13 @@
+﻿<UserControl x:Class="TheStage.Controls.GameController.Score"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:TheStage.Controls.GameController"
+             mc:Ignorable="d" 
+             Height="50">
+    <Grid>
+        <Image Source="pack://siteoforigin:,,,/Resources/Images/UI/GameController/scoreHolder.png"></Image>
+        <TextBlock Margin="0,10" Width="163" HorizontalAlignment="Right" Text="{Binding Score}" FontSize="25" Foreground="White" TextAlignment="Center"/>
+    </Grid>
+</UserControl>

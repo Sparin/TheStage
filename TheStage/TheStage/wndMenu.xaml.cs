@@ -12,6 +12,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using TheStage.ViewModel;
 
 namespace TheStage
 {
@@ -23,6 +24,7 @@ namespace TheStage
         public wndMenu()
         {
             InitializeComponent();
+            this.DataContext = new wndMenuViewModel();
         }
     }
 }

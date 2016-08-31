@@ -1,0 +1,43 @@
+﻿<UserControl x:Class="TheStage.Controls.GameController.Statistics"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:control="clr-namespace:TheStage.Controls.GameController"
+             mc:Ignorable="d"
+             Background="#55000000"
+             d:DesignHeight="600" d:DesignWidth="800">
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="../../Resources/Styles/GameControllerStyles.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </UserControl.Resources>
+    <Viewbox>
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition/>
+                <ColumnDefinition Width="200"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition/>
+                <RowDefinition/>
+                <RowDefinition/>
+                <RowDefinition/>
+            </Grid.RowDefinitions>
+            <control:ShortStatistics Grid.RowSpan="4"/>
+            <TextBlock Grid.Column="1" Grid.Row="0" Text="{Binding Status}" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="20" />
+            <Image Grid.Row="1" Grid.Column="1" Height="100" Source="{Binding Image}"/>
+            <TextBlock Margin="5" Grid.Column="1" Grid.Row="2" Text="{Binding Score}" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="20"/>
+            <Grid Grid.Row="3" Grid.Column="1">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition/>
+                    <ColumnDefinition/>
+                </Grid.ColumnDefinitions>
+                <Button Margin="5" x:Name="btnRestart" x:FieldModifier="private">Заново</Button>
+                <Button Margin="5" x:Name="btnBackToMenu" x:FieldModifier="private" Grid.Column="1">В меню</Button>
+            </Grid>
+        </Grid>
+    </Viewbox>
+</UserControl>
